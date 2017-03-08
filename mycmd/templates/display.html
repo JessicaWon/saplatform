@@ -63,24 +63,57 @@
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
+        {% block sidebar %}
+
         <li class="header">MAIN NAVIGATION</li>
+
         <li class="treeview">
-          <a href="/index/">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
+          <a href="http://10.10.11.69/index/">
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
+
         <li>
-          <a href="/general/">
+          <li class="treeview">
+          <a href="http://10.10.11.69/general/">
             <i class="fa fa-th"></i> <span>Servers status</span>
-            <small class="label pull-right bg-green">new</small>
           </a>
         </li>
-        <li class="treeview">
-          <a href="/dir/">
+
+        <li class="active treeview">
+          <a href="http://10.10.11.69/dir/">
             <i class="fa fa-edit"></i> <span>Display files</span>
-            <i class="fa fa-angle-left pull-right"></i>
           </a>
         </li>
+
+       <li class="treeview">
+           <a href="http://10.10.11.69/privileges/">                    
+               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-angle-left pull-right"></i>               
+           </a>
+           <ul class="treeview-menu">
+               <li class="treeview">
+                   <a href="/admin">admin</a>
+                   <i class="fa fa-angle-left pull-right"></i>
+                   <ul class="treeview-menu">
+                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
+                       <li class="treeview">
+                           <a href="/admin/role">                                    
+                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                           </a>
+                           <ul class="treeview-menu">
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>
+                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>
+                           </ul>
+                       </li>
+                   </ul>
+               </li>
+           </ul>
+       </li>
+        {% endblock %}
       </ul>
     </section>
   </aside>
@@ -161,10 +194,12 @@
 -->
               <div class="form-group">
 <!--去掉multiple以及后面的会产生下拉框[multiple="multiple" name="a" size="2"]-->
-              <label for="id_server_list">操作类别 </label> <select name="a" >
+              <label for="id_server_list">操作类别 </label>
+<!--
                   <option value="cp.get_file">文件更新 cp.get_file</option>
                   <option value="cp.get_dir">文件夹更新 cp.get_dir</option>
-              </select>
+-->
+                  <p>{{ salt_select_list_all.salt_command_select }}</p>
 
               </div>
                           <!--

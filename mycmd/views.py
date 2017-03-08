@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django import forms
-from mycmd.models import userCmd,userHost,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus
+from mycmd.models import userCmd,userHost,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod
 #from mycmd.models import *
 import os, urllib2, urllib, json, re, time, datetime, shutil
 #import pickle
@@ -13,6 +13,14 @@ import os, urllib2, urllib, json, re, time, datetime, shutil
 from mycmd import salt_read_dir
 import salt.client
 import os
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
+
+import ConfigParser
+from ldap3 import Server, Connection, SUBTREE
 #import os
 #import os.path
 #import json
@@ -215,6 +223,7 @@ def profile_delte(request):
         os.remove(path_file)
 ##uploadfy over
 ## update some files by select some directories
+@login_required(login_url="/login/")
 def update_files_salt(request):
     data_array = ""
     client = salt.client.LocalClient()
@@ -227,6 +236,9 @@ def update_files_salt(request):
     ## there is no need to translate data_array to data array json format
     data_array = dict = str(data_array).replace('][',',')
     print '------data-array---',data_array,'---------'
+
+    salt_select_list_all = SaltCommandMethod()
+    print '-----------salt method selected list------',salt_select_list_all,'-----sss-----'
     if request.method == 'POST':
         form = SaltUserFileForm(request.POST,request.FILES)
         if form.is_valid():
@@ -243,7 +255,8 @@ def update_files_salt(request):
             salt_command = form.cleaned_data['salt_command']
             print '`````````````````````',salt_command
             #salt_host = form.cleaned_data['salt_host']
-
+            salt_command_list = request.POST.get('salt_select_list_all')
+            print '----------ssssssssssssalt list command------',salt_command_list,'`````-------------`````'
             content = json.loads(json_data)
             content1 = content[1]
             server_length = len(content)
@@ -284,15 +297,21 @@ def update_files_salt(request):
             return HttpResponse('uploaded successfully in upload function')
     else:
         form = SaltUserFileForm() #初始化空表单
-    return render_to_response('display.html', {'form': form,'List': data_array})
+    return render_to_response('display.html', {'form': form,'List': data_array,'salt_select_list_all':salt_select_list_all})
 
+
+@login_required(login_url="/login/")
 def get_server_status(request):
 ##    infors = list()
     results = CloudServerStatus.objects.all()
+    print '---------session---------',request.session.items(),'------------'
     print results
     return render_to_response('general.html', {'results': results})
 
+@login_required(login_url="/login/")
 def index_page(request):  
+#    if username != 'test@skymoons.com':
+#        raise Exception("Please login frist")
     context = {}
 
     ## get the recent six months' name to display and to be used in following code
@@ -375,18 +394,80 @@ def user_login(request):
         form = LoginForm()
         return render_to_response('login.html',{'form':form})
     else:
+        print 'request method is post'
         form = LoginForm(request.POST)
+        print form
         if form.is_valid():
-            username = request.POST.get('username','')
-            password = request.POST.get('password','')
-            print 'request method is post'
+            username = request.POST.get('username')
+            #username = 'wangjuan@wangjuan'
+            password = request.POST.get('password')
+            #password = 'wangjuan'
+            print 'get username and password succeefullly'
             print password
-            user = auth.authenticate(username=username,password=password)
+            ##create new users for test=====
+            ## user = User.objects.create_user(username,username,password)
+            ## user.last_name = 'test00000'
+            ## user.save()
+            ## create user end=====
+
+            user = authenticate(username=username,password=password)
+            print '----user----',user,'--------------'
             if user is not None and user.is_active:
-                auth.login(request,user)
-                return HttpResponseRedirect('/login/')
+                auth_login(request,user)
+                print 'username or password is right'
+                if request.session.test_cookie_worked():
+                    request.session.delete_test_cookie()
+                    print 'Youre logged in.'
+                else:
+                    print 'didnt get session'
+                return HttpResponseRedirect('/index/')
             else:
+                print 'username or password is wrong'
                 return render_to_response('login.html',{'form':form,'password_is_wrong':True})
         else:
+            username = request.POST.get('username','')
+            #username = 'wangjuan@wangjuan'
+            password = request.POST.get('id_password','')
+            #password = 'wangjuan'
+            if not username:
+                print 'Enter a username.'
+            print 'username and password is wrong'
+            print password
             return render_to_response('login.html',{'form':form})
+def user_logout(request):
+    auth_logout(request)
+    return HttpResponseRedirect('/login/')
 
+
+
+def user_management(request):
+    results = User.objects.all()
+    print '---------session---------',request.session.items(),'------------'
+    print results
+    aaa = "aaa"
+    bbb = "111"
+    title = "add a new user"
+## read config files
+    total_entries = 0
+    conf = ConfigParser.SafeConfigParser()
+    conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
+    sections = conf.sections()
+    ldap_server = conf.get("ldap","server")
+    print '----------ldap server------',ldap_server
+    ldap_admin_user = conf.get("ldap", "admin_user")
+    ldap_pass = conf.get("ldap", "pass")
+    ldap_dn = conf.get("ldap", "dn")
+
+## connect to servers
+    server = Server(ldap_server)
+    conn = Connection(server,ldap_admin_user, ldap_pass, auto_bind=True)
+    conn.bind()
+    conn.search('ou=Services,dc=ldap,dc=skymoons,dc=com', '(objectclass=top)')
+    print '-------response---------',conn.response[0]['dn']
+    #print '-------single response-------',conn.response[0]['dn']
+    user_list = []
+    for i in conn.response:
+        print i['dn']
+        user_list.append(i['dn'])
+    print user_list
+    return render_to_response('user.html', {'results': results,'aaa': aaa, 'bbb': bbb, 'title': title,'response':conn.response})

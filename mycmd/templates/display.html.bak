@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | General Form Elements</title>
+  <title>Skymoons | SAplatform</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -11,7 +11,11 @@
   <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
   <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
   <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css">
+  <link href="/static/image/uploadify/uploadify.css" type="text/css" rel="stylesheet" />
   <script type="text/javascript" src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script> 
+  <script type="text/javascript" src="/static/image/uploadify/jquery.uploadify-3.1.min.js"></script>
+  
   <script src="/static/js/jquery.ztree.all-3.5.min.js"></script>
 </head>
 
@@ -89,16 +93,37 @@
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Upload files</h3>
+              <h3 class="box-title">更新文件</h3>
             </div>
             <!-- /.box-header -->
 			            <form method="post" enctype="multipart/form-data">
+<!--
                           <div class="form-group">
-                                        <label for="id_upload_file">File input</label>
+                                        <label for="id_upload_file">上传文件</label></br>
                                         {{ form.upload_file }}
                                         {{ field.errors }}
               </div>
-                          <div class="box-body">
+-->
+<!--下面的是前端测试通过的
+              <h3>Uploadify组件上传方式</h3>
+              <div class="demo-box">  
+                  <input id="file_upload" type="file" name="Filedata">  
+                  <div id="file_uploadQueue" class="uploadifyQueue"></div>  
+                  <p><span id="id_span_msg"></span></p>  
+              </div> 
+-->
+              <div class="item2 mt15">
+                <span class="reg-tit3">上传附件：</span>
+                  <div class="reg-inf">
+                    <input type="file" name="uploadFile" id="uploadFile" class="pub-btn" />  
+                      <div id="fileQueue"></div>
+                      <a href="javascript:$('#uploadFile').uploadify('upload','*')">上传文件</a>
+
+                      <a href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a>
+                  </div> 
+                      <label id="showFile" name="showFile"></label>
+               </div>
+                   <div class="box-body">
 <!--
                 <div class="form-group">
                   <label for="id_update_dir">update_dir</label>
@@ -136,10 +161,12 @@
 -->
               <div class="form-group">
 <!--去掉multiple以及后面的会产生下拉框[multiple="multiple" name="a" size="2"]-->
-              <label for="id_server_list">操作类别 </label> <select name="a" >
+              <label for="id_server_list">操作类别 </label>
+<!--
                   <option value="cp.get_file">文件更新 cp.get_file</option>
-                  <option value="cp.get_file">文件夹更新 cp.get_dir</option>
-              </select>
+                  <option value="cp.get_dir">文件夹更新 cp.get_dir</option>
+-->
+                  <p>{{ salt_select_list_all.salt_command_select }}</p>
 
               </div>
                           <!--
@@ -180,6 +207,7 @@
 
 
 <script>
+    //----------------------------------------------------------
     var zTree;
     var demoIframe;
 
@@ -253,6 +281,12 @@
                 console.log(data["jsonTree"]);
                 console.log(000000);
                 console.log(9999999999);
+                console.log(1 +  "2" + "2");
+                console.log(1 +  +"2" + "2");
+                console.log(1 +  -"1" + "2");
+                console.log(+"1" +  "1" + "2");
+                console.log( "A" - "B" + "2");
+                console.log( "A" - "B" + 2);
             },
         }
     };
@@ -315,6 +349,49 @@
                 //}
             });
         });
+    //-------------------------------------------------------
+        $("#uploadFile").uploadify({
+        /*注意前面需要书写path的代码*/
+        'swf': '/static/image/uploadify/uploadify.swf',
+        'uploader': '/upload_script/', //请求的Action  
+        'cancelImg': '/static/image/uploadify/uploadify-cancel.png',
+        'method': 'GET',
+        'queueID': 'fileQueue', //和存放队列的DIV的id一致   
+        'fileObjName': 'uploadFile',//和input的name属性值保持一致就好，Struts2就能处理了     
+        'auto': false, //是否自动开始   
+        'multi': true, //是否支持多文件上传   
+        'buttonText': '上传', //按钮上的文字  
+        'simUploadLimit': 10, //一次同步上传的文件数目   
+        'sizeLimit': 19871202, //设置单个文件大小限制                  
+        'queueSizeLimit': 5, //限制在一次队列中的次数（可选定几个文件）。默认值= 999，而一次可传几个文件有 simUploadLimit属性决定。  
+        'fileSizeLimit': 10 * 1024 * 1024, //设置单个文件大小限制，单位为byte ,10M  
+        'removeCompleted': true,
+        'removeTimeout': 0.5,
+        'requeueErrors': true,
+        'onUploadProgress' : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal,queueBytesLoaded) {  
+
+            $("#result").append("<div>文件\""+file.name+"\"共"+totalBytesTotal+"字节，已上传"+totalBytesUploaded + "字节!</div><br/>");  
+            if(totalBytesUploaded==totalBytesTotal){  
+            $("#result").append("<div>文件\""+file.name+"\"上传成功！</div><br/>");  
+            }  
+        },  
+        'onUploadComplete': function (file) {
+             $("#result").append("<div>文件"+file.name+"上传成功！</div><br/>");  
+        },
+        'onUploadSuccess': function (file, data, response) {
+            if ($("#hidFile").val() == "") {
+                $("#hidFile").val(data);
+                $("#showFile").text(data);
+            } else {
+                $("#hidFile").val($("#hidFile").val() + "|" + data + "");
+                $("#showFile").text($("#showFile").text() + ";" + data + "");
+            }
+        },
+        'onUploadError': function (file, errorCode, errorMsg, errorString, swfuploadifyQueue) {
+            $("#result").html(errorString);  
+        },
+    });
+
     });
 
     function loadReady() {

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+{% block head %}
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Dashboard</title>
+  <title>{% block title %}SKYMOONS | Dashboard{% endblock %}</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -12,13 +13,13 @@
   <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
   <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
 
+{% endblock %}
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
   <header class="main-header">
-
     <!-- Logo -->
     <a href="index2.html" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
@@ -74,7 +75,7 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="/login/" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="/logout/" class="btn btn-default btn-flat">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -114,25 +115,54 @@
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
+        {% block sidebar %}
         <li class="header">MAIN NAVIGATION</li>
         <li class="active treeview">
           <a href="http://10.10.11.69/index/">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
 
         <li>
+          <li class="treeview">
           <a href="http://10.10.11.69/general/">
             <i class="fa fa-th"></i> <span>Servers status</span>
-            <small class="label pull-right bg-green">new</small>
           </a>
         </li>
-		<li class="treeview">
+
+        <li class="treeview">
           <a href="http://10.10.11.69/dir/">
             <i class="fa fa-edit"></i> <span>Display files</span>
-            <i class="fa fa-angle-left pull-right"></i>
           </a>
         </li>
+
+       <li class="treeview">
+           <a href="http://10.10.11.69/privileges/">                    
+               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-angle-left pull-right"></i>               
+           </a>
+           <ul class="treeview-menu">
+               <li class="treeview">
+                   <a href="/admin">admin</a>
+                   <ul class="treeview-menu">
+                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
+                       <li class="treeview">
+                           <a href="/admin/role">                                    
+                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                           </a>
+                           <ul class="treeview-menu">
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>
+                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>
+                           </ul>
+                       </li>
+                   </ul>
+               </li>
+           </ul>
+       </li>
+      {% endblock %}
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -142,6 +172,7 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
+    {% block content-header %}
       <h1>
         Project Overview
         <small>Version 1.0</small>
@@ -150,10 +181,12 @@
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active">Dashboard</li>
       </ol>
+     {% endblock %}
     </section>
 
     <!-- Main content -->
     <section class="content">
+    {% block content %}
       <!-- Info boxes -->
       <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -351,6 +384,7 @@
       <!-- Main row -->
       </div>
       <!-- /.row -->
+    {% endblock %}
     </section>
     <!-- /.content -->
   </div>

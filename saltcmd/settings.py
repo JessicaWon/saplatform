@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mycmd',
-#    'auth',
+    'account',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -54,6 +54,9 @@ MIDDLEWARE_CLASSES = (
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 )
+## django setting session expire time, here set to be half hour, translate to second is 1800 seconds
+SESSION_COOKIE_AGE = 1800
+SESSION_EXPIRE_AT_BROWSER_CLOSE = 'true'
 
 ROOT_URLCONF = 'saltcmd.urls'
 

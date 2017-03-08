@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% extends "index2.html" %}
+{% block title %}Skymoons{% endblock %}
 <html>
 <head>
   <meta charset="utf-8">
@@ -57,6 +59,58 @@
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
+
+        {% block sidebar %}
+        <li class="header">MAIN NAVIGATION</li>
+
+        <li class="treeview">
+          <a href="http://10.10.11.69/index/">
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+          </a>
+        </li>
+
+        <li class="active treeview">
+          <a href="http://10.10.11.69/general/">
+            <i class="fa fa-th"></i> <span>Servers status</span>
+          </a>
+        </li>
+
+        <li class="treeview">
+          <a href="http://10.10.11.69/dir/">
+            <i class="fa fa-edit"></i> <span>Display files</span>
+          </a>
+        </li>
+
+       <li class="treeview">
+           <a href="http://10.10.11.69/privileges/">                    
+               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-angle-left pull-right"></i>               
+           </a>
+           <ul class="treeview-menu">
+               <li class="treeview">
+                   <a href="/admin">admin</a>
+                   <ul class="treeview-menu">
+                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
+                       <li class="treeview">
+                           <a href="/admin/role">                                    
+                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                           </a>
+                           <ul class="treeview-menu">
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>
+                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>
+                           </ul>
+                       </li>
+                   </ul>
+               </li>
+           </ul>
+       </li>
+
+        {% endblock %}
+
+<!--
         <li class="header">MAIN NAVIGATION</li>
         <li class="treeview">
           <a href="http://10.10.11.69/index/">
@@ -75,6 +129,7 @@
             <i class="fa fa-angle-left pull-right"></i>
           </a>
         </li>
+-->
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -83,10 +138,22 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <section class="content-header">
+    {% block content-header %}
+      <h1>
+        Servers Status
+        <small>Version 1.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Servers status</li>
+      </ol>
+     {% endblock %}
+    </section>
 
     <!-- Main content -->
     <section class="content">
-
+    {% block content %}
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -132,6 +199,7 @@
 		</div>
 	  </div>
 	  </div>
+        {% endblock %}
 	</section>
 <!-- ./wrapper -->
 <script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>

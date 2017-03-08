@@ -46,6 +46,11 @@ class SaltUserFileForm(forms.Form):
 #    salt_command = forms.CharField()
 #    salt_host = forms.CharField(max_length = 50)
 
+class SaltCommandMethod(forms.Form):
+    salt_command_list = (("file update","cp.get_file"),("directory update","cp.get_dir"),("get file from a url","cp.get_url"))
+    salt_command_select = forms.MultipleChoiceField(choices=salt_command_list,widget=forms.CheckboxSelectMultiple())
+
+
 class SaltUserFile(models.Model):
     create_time = models.DateTimeField(default=datetime.now)
     update_time = models.DateTimeField(default=datetime.now)
@@ -98,7 +103,8 @@ class LoginForm(forms.Form):
             error_messages={'required':'please input username'},
             widget=forms.TextInput(
                 attrs={
-                    'placeholder':'password',
+                    'placeholder':'Username',
+                    'size': '40',
                     }
                 )
             )
@@ -109,14 +115,15 @@ class LoginForm(forms.Form):
             error_messages = {'required':'please input password'},
             widget=forms.PasswordInput(
                 attrs={
-                    'placeholder':'password',
+                    'placeholder':'Password',
+                    'size': '40',
                     }
                 ),
             )
 
     def clean(self):
         if not self.is_valid():
-            raise forms.ValidationError('you should imput username and password')
+            raise forms.ValidationError('you should input username and password')
         else:
             cleaned_data = super(LoginForm,self).clean()
 

@@ -27,8 +27,11 @@ urlpatterns = [
     url(r'^index/', views.index_page),
     url(r'^general/', views.get_server_status),
     url(r'^login/', views.user_login),
+    url(r'^logout/', views.user_logout),
     url(r'^data/', views.get_server_to_be_updated),
     url(r'^/', views.get_server_to_be_updated),
     url(r'^upload_script/',views.uploadify_script),
     url(r'^delete_uploadfile/$', views.profile_delte),
+    url(r'^account/', include('account.urls')),
+    url(r'^user/',views.user_management),
 ]

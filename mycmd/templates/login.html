@@ -35,15 +35,33 @@
   <div class="login-box-body">
     <p class="login-box-msg">Sign in to manage your system</p>
 
-    <form action="http://10.10.11.69/index/" method="post">
+    <form action="http://10.10.11.69/login/" method="post">
+<!--旧的格式，但是无法登录
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Username">
+        <input type="email" class="form-control" placeholder="Username" >
+        {{form.username}}
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="password" class="form-control" placeholder="Password" id="password">
+        {{form.password}}
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+-->
+    <div>
+        <div class="form-group">
+            <label for="username">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username</label><br>
+<!--                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-->             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.username }}
+                {{ field.errors }}
+        </div>
+       <div class="form-group">
+            <label for="password">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password</label><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.password }}
+                {{ field.errors }}
+        </div>
+     </div>
+
       <div class="row">
         <div class="col-xs-8">
           <div class="checkbox icheck">
