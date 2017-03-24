@@ -1,17 +1,16 @@
 from django.db import models
 from django import forms
 from datetime import datetime
+from django.contrib.auth.models import User,Group
+from guardian.shortcuts import assign_perm,assign,remove_perm
+from guardian.models import UserObjectPermission
+
 # Create your models here.
 
 class userCmd(models.Model):
     u_cmd = models.CharField(max_length=50)
     def __unicode__(self):
         return str(self.u_cmd)
-
-class userHost(models.Model):
-    u_host = models.CharField(max_length=50)
-    def __unicode__(self):
-        return str(self.u_host)
 
 class userFile(models.Model):
     f_title = models.CharField(max_length = 30)
@@ -28,6 +27,7 @@ class CloudServerStatus(models.Model):
     server_ip = models.CharField(max_length = 60)
     server_status = models.CharField(max_length = 60)
     server_status_reason = models.CharField(max_length = 60)
+    engineer_name = models.CharField(max_length = 60)
     def __unicode__(self):
         return self.server_status
 #----------------------------------------------------------------
@@ -87,14 +87,6 @@ class GameServer(models.Model):
     def __unicode__(self):
         return self.gameserver_id
 
-#class CloudServerStatus(models.Model):
-#    update_time = models.DateTimeField(default=datetime.now)
-#    server_ip = models.CharField(max_length = 60)
-#    server_status = models.CharField(max_length = 60)
-#    server_status_reason = models.CharField(max_length = 60)
-#    def __unicode__(self):
-#        return self.server_status
-
 #class GameServerDir(models.Model) #still not decided whether to create this model
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -127,3 +119,67 @@ class LoginForm(forms.Form):
         else:
             cleaned_data = super(LoginForm,self).clean()
 
+class UserDelList(models.Model):
+    #def __init__(self,deleted_by,deleted_user_id,deleted_time,delete_result):
+    deleted_by = models.CharField(max_length=32)
+    deleted_user_id = models.ForeignKey(User)
+    deleted_time = models.DateTimeField(default=datetime.now)
+    delete_result = models.TextField()
+
+    class Meta:
+        permissions = (
+            ("view_task", "Can see available tasks"),
+        )
+
+    def del_user_task(self):
+        #print self.deleted_by
+        #print "aaaaaa"
+        if self.deleted_user_id != 1:
+            user = User.objects.get(id=self.deleted_user_id_id)
+            user.delete()
+        else:
+            return "could not delete super user"
+        print "aaaaaa"
+
+
+class Host(models.Model):
+    hostname = models.CharField(max_length=64, unique=True)
+    ip_addr = models.GenericIPAddressField(unique=True)
+    port = models.IntegerField(default=22)
+    system_type_choices = (
+        ('linux', "Centos6"),
+        ('linux', "Centos7")
+    )
+    system_type = models.CharField(choices=system_type_choices, max_length=32)
+    enabled = models.BooleanField(default=True)
+    create_date = models.DateTimeField(auto_now_add=True)
+    online_date = models.DateTimeField()
+    groups = models.ManyToManyField('HostGroup')
+    service_company = models.ForeignKey('ServiceCompany')
+
+    def __unicode__(self):
+        return self.hostname
+
+
+class ServiceCompany(models.Model):    # aws or aliyun
+    name = models.CharField(max_length=64, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class HostGroup(models.Model):  # host group
+    name = models.CharField(max_length=64, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    name = models.CharField(max_length=64, unique=True)
+    host_groups = models.ManyToManyField('HostGroup', blank=True, null=True)
+    hosts = models.ManyToManyField('Host', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name

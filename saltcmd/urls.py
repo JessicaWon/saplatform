@@ -32,6 +32,12 @@ urlpatterns = [
     url(r'^/', views.get_server_to_be_updated),
     url(r'^upload_script/',views.uploadify_script),
     url(r'^delete_uploadfile/$', views.profile_delte),
-    url(r'^account/', include('account.urls')),
+#    url(r'^account/', include('account.urls')),
     url(r'^user/',views.user_management),
+    url(r'^useradd/',views.user_add),
+    url(r'^userlist/',views.user_list),
+    url(r'^useredit/',views.user_edit),
+    url(r'^userdel/',views.user_del),
+    url(r'^permadd/',views.perms_add),
+    url(r'^perm_del/',views.perms_delete),
 ]

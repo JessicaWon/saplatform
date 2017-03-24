@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django import forms
-from mycmd.models import userCmd,userHost,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod
+from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList
 #from mycmd.models import *
 import os, urllib2, urllib, json, re, time, datetime, shutil
 #import pickle
@@ -14,13 +14,30 @@ from mycmd import salt_read_dir
 import salt.client
 import os
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 import ConfigParser
 from ldap3 import Server, Connection, SUBTREE
+from ldap3 import HASHED_SALTED_SHA256
+from ldap3.utils.hashed import hashed
+from passlib.hash import ldap_md5_crypt as md5encode
+from django.template import RequestContext
+
+import crypt
+
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import Permission
+from guardian.shortcuts import assign_perm,assign
+from guardian.models import UserObjectPermission
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+
+from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
 #import os
 #import os.path
 #import json
@@ -93,8 +110,8 @@ def cmd(request):
 
         u_host_frompage = request.POST.get("u_host",'')
         print u_host_frompage
-        p2 = userHost(u_host = u_host_frompage)
-        p2.save()
+        #p2 = userHost(u_host = u_host_frompage)
+        #p2.save()
     #else
     #    u_file_frompage = userFile()
     return render(request,'index.html')
@@ -299,12 +316,18 @@ def update_files_salt(request):
         form = SaltUserFileForm() #初始化空表单
     return render_to_response('display.html', {'form': form,'List': data_array,'salt_select_list_all':salt_select_list_all})
 
-
+#@permission_required('mycmd.delete_userdellist')
 @login_required(login_url="/login/")
 def get_server_status(request):
 ##    infors = list()
-    results = CloudServerStatus.objects.all()
-    print '---------session---------',request.session.items(),'------------'
+    #results = CloudServerStatus.objects.all()
+    print '---------session---------',request.session.items(),request.session,'------------'
+    user_id = request.session.items()[1][1]
+    print user_id
+    username = User.objects.get( id = user_id )
+    print '--------get username-------',username
+    results = CloudServerStatus.objects.filter( engineer_name = username)
+    print '--------get results-------',results
     print results
     return render_to_response('general.html', {'results': results})
 
@@ -386,7 +409,12 @@ def index_page(request):
     ## it depends if all the users need this
     online_players = 2000000
 
-    return render_to_response('index2.html', {'game_server':game_server,'cloud_server':cloud_server,'pkq_gameserver':pkq_gameserver,'wlwz_gameserver':wlwz_gameserver,'sanguo_gameserver':sanguo_gameserver,'other_gameserver':other_gameserver,'zabbix_alert':zabbix_alert,'turnover':turnover,'online_players':online_players,'pkq_data': pkq_gameserver,'month_name_pool':month_name_pool,'new_cloud_server_half_year':json.dumps(new_cloud_server_half_year),'new_game_server_half_year':json.dumps(new_game_server_half_year)})
+    user_id = request.session.items()[1][1]
+    print user_id
+    username = User.objects.get(id = user_id )
+
+
+    return render_to_response('index2.html', {'username':username,'game_server':game_server,'cloud_server':cloud_server,'pkq_gameserver':pkq_gameserver,'wlwz_gameserver':wlwz_gameserver,'sanguo_gameserver':sanguo_gameserver,'other_gameserver':other_gameserver,'zabbix_alert':zabbix_alert,'turnover':turnover,'online_players':online_players,'pkq_data': pkq_gameserver,'month_name_pool':month_name_pool,'new_cloud_server_half_year':json.dumps(new_cloud_server_half_year),'new_game_server_half_year':json.dumps(new_game_server_half_year)})
 
 def user_login(request):
     if request.method == 'GET':
@@ -439,7 +467,7 @@ def user_logout(request):
     return HttpResponseRedirect('/login/')
 
 
-
+@login_required(login_url="/login/")
 def user_management(request):
     results = User.objects.all()
     print '---------session---------',request.session.items(),'------------'
@@ -447,27 +475,321 @@ def user_management(request):
     aaa = "aaa"
     bbb = "111"
     title = "add a new user"
+## use ldap to authorise
 ## read config files
-    total_entries = 0
-    conf = ConfigParser.SafeConfigParser()
-    conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
-    sections = conf.sections()
-    ldap_server = conf.get("ldap","server")
-    print '----------ldap server------',ldap_server
-    ldap_admin_user = conf.get("ldap", "admin_user")
-    ldap_pass = conf.get("ldap", "pass")
-    ldap_dn = conf.get("ldap", "dn")
+##     total_entries = 0
+##     conf = ConfigParser.SafeConfigParser()
+##     conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
+##     sections = conf.sections()
+##     ldap_server = conf.get("ldap","server")
+##     print '----------ldap server------',ldap_server
+##     ldap_admin_user = conf.get("ldap", "admin_user")
+##     ldap_pass = conf.get("ldap", "pass")
+##     ldap_dn = conf.get("ldap", "dn")
+## 
+## ## connect to servers
+##     server = Server(ldap_server)
+##     conn = Connection(server,ldap_admin_user, ldap_pass, auto_bind=True)
+##     conn.bind()
+##     conn.search('ou=Services,dc=ldap,dc=skymoons,dc=com', '(objectclass=top)')
+##     print '-------response---------',conn.response[0]['dn']
+##     #print '-------single response-------',conn.response[0]['dn']
+##     user_list = []
+##     for i in conn.response:
+##         print i['dn']
+##         user_list.append(i['dn'])
+##     print user_list
+    group_all = Group.objects.all()
+    session_role_id = 2
+    return render_to_response('user.html', {'results': results,'group_all': group_all,'session_role_id':session_role_id},context_instance=RequestContext(request))
 
-## connect to servers
-    server = Server(ldap_server)
-    conn = Connection(server,ldap_admin_user, ldap_pass, auto_bind=True)
-    conn.bind()
-    conn.search('ou=Services,dc=ldap,dc=skymoons,dc=com', '(objectclass=top)')
-    print '-------response---------',conn.response[0]['dn']
-    #print '-------single response-------',conn.response[0]['dn']
-    user_list = []
-    for i in conn.response:
-        print i['dn']
-        user_list.append(i['dn'])
-    print user_list
-    return render_to_response('user.html', {'results': results,'aaa': aaa, 'bbb': bbb, 'title': title,'response':conn.response})
+@login_required(login_url="/login/")
+#@privileges_required
+def user_add(request):
+    if request.method == 'GET':
+        print 'request method is get'
+        #form = LoginForm()
+        form = User()
+        group_all = Group.objects.all()
+        return render_to_response('user_add.html',{'form':form,'group_all': group_all},context_instance=RequestContext(request))
+    else:
+        ## try:
+        ## first step is to add user to the login system which is in MySQLdb, second step is to add user to ldap DB
+        username = request.POST.get('username')
+        print '---------username------',username
+        password = request.POST.get('password')
+        print password
+        email = request.POST.get('email')
+        user = User.objects.create_user(username,email,password)
+        user.last_name = username
+        group = request.POST.get('groups')
+        print '-------groupid------',group
+
+        ## add user to the selected group
+        user.groups.add(group)
+        user.save()
+        ## the second step is to add users to ldap
+        #read ldap config file
+        conf = ConfigParser.SafeConfigParser()
+        conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
+        ldap_server = conf.get("ldap","server")
+        ldap_admin_user = conf.get("ldap", "admin_user")
+        ldap_pass = conf.get("ldap", "pass")
+        ldap_dn = conf.get("ldap", "dn")
+
+        #connect to servers
+        server = Server(ldap_server)
+        conn = Connection(server,ldap_admin_user, ldap_pass, auto_bind=True)
+        conn.bind()
+
+        user_dn = 'uid=' + username + ',' + 'ou=People,ou=privileges,' + ldap_dn
+        print user_dn
+        ## every user has a unique number for uid
+        uidnumber = 66
+        add_type = ['inetOrgPerson','posixAccount','top']
+        homedir = '/home/' + username
+        ## hash the password to
+        password1 = password.encode("utf-8")
+        ## hashed password cannot be used in Unix, so we should use md5
+        #hashed_password = hashed(HASHED_SALTED_SHA256, password1)
+        #print '-----hashed password------',hashed_password
+
+        md5_password = md5encode.encrypt(password1)
+        print '----md5ed password---',md5_password
+        attributes = {'givenName': username,'uid':username,'loginShell':'/bin/bash','userPassword':md5_password,'sn': 'yunwei','cn' : 'yunwei','uidNumber':uidnumber,'gidNumber':5044,'homeDirectory':homedir}
+        conn.add(user_dn,add_type,attributes)
+        ## use test to add a new user
+        ##conn.add('uid=test12,ou=People,ou=privileges,dc=ldap,dc=skymoons,dc=com',['inetOrgPerson','posixAccount','top'],{'givenName': 'test12','uid':'test12','loginShell':'/bin/bash','userPassword':'{CRYPT}$6$PaQp4cLy$vVF.jvW71lnQgWg3FwfWs/mpu54cTlLxw2.Q29eZl6PhEVI6up.Pa35IVocDqmMyQpC/46eBqBqoF8wdMcp/G0','sn': 'won','cn' : 'won','uidNumber':62,'gidNumber':5044,'homeDirectory':'/home/test12'})
+        ##print(conn.result)
+        conn.unbind()
+        print 'add user successfully'
+        #return HttpResponseRedirect('/useradd/')
+        return render_to_response('user_add.html',context_instance=RequestContext(request))
+        #except:
+        #    return HttpResponseRedirect('plz check your username and password')
+
+@login_required(login_url="/login/")
+#@permission_required('view.user_add')
+def user_list(request):
+    session_role_id = 2
+    group_all = Group.objects.all()
+    print group_all
+    user_all = User.objects.all()
+    print '------------user all---------',user_all
+    user = User.objects.get(id=45)
+    print '------------group all--------',user
+    #print '--------------users group------', user.groups.through.get()
+    #user_group = User.groups.objects.all()
+    #print user_group
+    
+    print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
+    #Permission.objects.create(content_type_id=10,codename='codename',name='wangjuan')
+    ## delete permission called codename, which can find in the mysqldb in table auth_permissions
+    #Permission.objects.get(codename='codename').delete()
+    print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
+
+    ##create users
+    ## jack = User.objects.create_user('jack', 'jack@example.com', 'topsecretagentjack')
+    ## admins = Group.objects.create(name='admins')
+    ## print jack.has_perm('change_group', admins)
+    #username.user_permissions.all()
+    #Group.objects.get(user=current_user_set)
+    return render_to_response('user_list.html', {'user_all': user_all,'group_all': group_all,'session_role_id':session_role_id})
+
+
+
+def user_edit(request):
+    header_title, path1, path2 = '编辑用户', '用户管理', '编辑用户'
+    if request.method == 'GET':
+        user_id = request.GET.get('id')
+        print '-----------------', user_id
+        if not user_id:
+            #return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect('/userlist/')
+
+        user_role = {'SU': u'超级管理员', 'CU': u'普通用户'}
+        user = User.objects.get( id=user_id)
+        print user
+        #username = User.objects.get( id = user_id )
+        group_all = Group.objects.all()
+        print group_all
+        if user:
+            #groups_str = ' '.join([str(group.id) for group in user.group.all()])
+            #admin_groups_str = ' '.join([str(admin_group.group.id) for admin_group in user.admingroup_set.all()])
+            return render_to_response('user_edit.html',{'user':user,'group_all':group_all})
+
+    else:
+        print '-------reurl to post------'
+        user_id = request.GET.get('id')
+        print '-----user id-------',user_id
+        password = request.POST.get('password')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        groups = request.POST.getlist('groups')
+        print '--------selected group------',groups[0]
+        group_id = int(groups[0])
+        group_name = Group.objects.all()
+        #print '--------groups-------',group_name[group_id]
+
+        role_post = request.POST.get('role', 'CU')
+        admin_groups = request.POST.getlist('admin_groups', [])
+        print '----------all groups----',admin_groups
+        extra = request.POST.getlist('extra', [])
+        is_active = True if '0' in extra else False
+        email_need = True if '1' in extra else False
+        user_role = {'SU': u'超级管理员', 'GA': u'部门管理员', 'CU': u'普通用户'}
+
+        if user_id:
+            user = User.objects.get(id=user_id)
+            
+            print '------username---',user
+        else:
+            return HttpResponseRedirect(reverse('/user_list/'))
+
+        ##db_update_user(user_id=user_id,
+        ##               password=password,
+        ##               username=name,
+        ##               email=email,
+        ##               groups=groups,
+        ##               admin_groups=admin_groups,
+        ###               role=role_post,
+        ##               is_active=is_active)
+        print user.has_perm('change_group')
+
+        ## test if a user have some perm, if have, return true, if not, return false
+        #user1 = User.objects.get(id=49)
+        #print user1.has_perm('change_group')
+
+
+        ##modify users information without creating a new one
+        user.last_name = name
+        user.password = make_password(password,None,'pbkdf2_sha256')
+        print '-----------encrypted password-------',user.password
+        user.email = email
+        username = request.POST.get('username')
+        print '---------username------',username
+        email = request.POST.get('email')
+        user.last_name = username
+        user.save()
+
+        if email_need:
+            msg = u"""
+            Hi %s:
+                您的信息已修改，请登录跳板机查看详细信息
+                地址：%s
+                用户名： %s
+                密码：%s (如果密码为None代表密码为原密码)
+                权限：：%s
+            """ % (user.name, URL, user.username, password, user_role.get(role_post, u''))
+            send_mail('您的信息已修改', msg, MAIL_FROM, [email], fail_silently=False)
+
+        #return HttpResponseRedirect(reverse('user_list'))
+        return HttpResponseRedirect('/userlist/')
+    #return my_render('user_edit.html', locals(), request)
+    return render_to_response('user_edit.html', request)
+
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")
+def user_del(request):
+    #assign perms to user
+    
+    user_id = request.session.items()[1][1]
+    print user_id
+    username = User.objects.get( id = user_id )
+    superuser = User.objects.get( id = 1 )
+
+   
+    if request.method == "GET":
+    #    print 'get method'
+        user_id = request.GET.get('id')
+        user_id_list = user_id.split(',')
+
+    elif request.method == "POST":
+    #    print 'post method'
+        user_id = request.POST.get('id')
+        user_id_list = user_id.split(',')
+    else:
+    #    print 'error'
+        return HttpResponse('错误请求')
+
+    #print 'user id',user_id
+    #print 'user id list',user_id_list
+    del_object = UserDelList.objects.create(deleted_user_id_id=user_id,deleted_by=username,delete_result='success')
+    #assign_perm('mycmd.delete_userdellist',username)
+
+
+    del_object.del_user_task()
+    
+
+    #user = User.objects.get(id=user_id)
+    #print user
+    #if user.last_name != 'root' and user.username != 'root':
+    #    user.delete()
+
+    return HttpResponse('删除成功')
+
+
+@login_required(login_url="/login/")
+def perms_add(request):
+    session_role_id = 2
+    if request.method == 'GET':
+        print 'request method is get-------'
+        #form = LoginForm()
+        form = Permission()
+        user_all = User.objects.all()
+        group_all = Group.objects.all()
+        print '---all groups----',group_all
+        perm_all = Permission.objects.all()
+        print '---all perms----',perm_all
+        relist = {'re':'initialisze successfully'}
+        #return JsonResponse(relist)
+        #return render_to_response('perms_manage.html',{'group_all':group_all,'perm_all':perm_all},context_instance=RequestContext(request))
+        return render_to_response('perms_manage.html',{'group_all':user_all,'perm_all':perm_all},context_instance=RequestContext(request))
+
+    else:
+        user_all = User.objects.all()
+        group_all = Group.objects.all()
+        perm_all = Permission.objects.all()
+
+        group = request.POST.get('groups')
+        user = request.POST.get('groups')
+        print '----------------1------------------',group
+        #groupname = Group.objects.get(id =group)
+        username = User.objects.get(id =user)
+        #print '----------------2------------------',groupname
+        codename = request.POST.getlist('permall')
+        print '----------------3------------------',codename
+        #print '----------------4------------------',groupname.permissions.all()
+
+        for perm in codename:
+            permname = Permission.objects.filter(id = perm)
+            print '----------------6------------------',permname
+            ##if the permname in the groups perm, then you can return a note that you already have a perm about this
+            #if permname[0] in groupname.permissions.all():
+            if permname[0] in username.user_permissions.all():
+                ## relist = {'re':'this perm already exist, please choose again'}
+                ## #return render_to_response('perms_manage.html',context_instance=RequestContext(request))
+                ## return JsonResponse(relist)
+                print '-----------------7----------------'
+            ##if the permname not in the groupname perms, then you can add a new perm in the group
+            else:
+                #Permission.objects.create(content_type_id=int(content_type_id),codename=codename,name=name)
+                ## groupname.permissions.add(codename)
+                ## relist = {'re':'add perms successfully'}
+                ## #return JsonResponse(relist)
+                ## return render_to_response('perms_manage.html',context_instance=RequestContext(request))
+                print '-----------------add new perm to the group----------------'
+                #groupname.permissions.add(perm)
+                username.user_permissions.add(perm)
+                #assign_perm('mycmd.change_userdellist',username) ##user assign can meet the demand
+
+
+        #return render_to_response('perms_manage.html',{'group_all':group_all,'perm_all':perm_all},context_instance=RequestContext(request))
+        return render_to_response('perms_manage.html',{'group_all':user_all,'perm_all':perm_all},context_instance=RequestContext(request))
+    
+def perms_delete(request):
+    codename = request.POST['codename']
+    Permission.objects.get(codename=codename).delete()
+    relist = {'re':"该权限删除成功!"}
+    return render_to_response('perms_manage.html',request)
