@@ -3,3 +3,4 @@ this project is a helpful platform to make all the system administrator's work m
 
 #0308,add ldap tree-display organisation 
 #0401 upload some files and update those files
+![image](https://github.com/JessicaWon/saplatform/preview/addperm.jpg)
