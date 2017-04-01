@@ -183,3 +183,27 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class UpdateFiles(forms.Form):
+    is_all_gameservers = forms.BooleanField()
+    input_gameserver_id = forms.TextInput()
+    update_type = (
+            ('activity_update', "activity update"),
+            ('bug_fix', "bug fix"),
+            ('game_update', "game update")
+    )
+    def __unicode__(self):
+            return self.name
+
+class UpdateFilesDB(models.Model):
+    update_time = models.DateTimeField(default=datetime.now)
+    is_all_gameservers = models.CharField(max_length=128, unique=False)
+    input_gameserver_id = models.CharField(max_length=32, unique=False)
+    update_type = models.CharField(max_length=128, unique=False)
+    update_files_dir = models.CharField(max_length=128, unique=False)
+    update_files = models.CharField(max_length=128, unique=False)
+    update_outcome = models.CharField(max_length=64, unique=False)
+    update_by = models.CharField(max_length=128, unique=False)
+    def __unicode__(self):
+        return self.name
+

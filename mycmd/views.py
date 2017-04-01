@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django import forms
-from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList
+from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList,UpdateFiles,UpdateFilesDB
 #from mycmd.models import *
 import os, urllib2, urllib, json, re, time, datetime, shutil
 #import pickle
@@ -142,7 +142,7 @@ def upload_file(request):
         form = userFile()
     return render_to_response('upload.html', {'form': form})
 
-
+'''
 def update_file(request):
     if request.method == 'POST':
         form = SaltUserFileForm(request.POST, request.FILES)
@@ -171,8 +171,8 @@ def update_file(request):
             return HttpResponse(html)
     else:
         form = SaltUserFile()
-    return render_to_response('update.html', {'form': form})
-
+    return render_to_response('display.html', {'form': form})
+'''
 
 ## the following code is to list contents of directories in a tree-like format
 def post_json_data_to_ztree(request):
@@ -190,131 +190,171 @@ def get_server_to_be_updated(request):
         global json_data
         json_data = request.POST['data']
         print '-------serverlist---',json_data,'-----------'
-        #content = json.loads(json_data)
+        content = json.loads(json_data)
+        ##new add in 0328
+
     else:
         return "post json data raised a error"
-    #return json_data
-        #var selected_server_list[];
+    return json_data
+    #    var selected_server_list[];
 ## get all server list is over
 
 ## uploadfy
 #@csrf_exempt  
 #@requires_csrf_token
-def uploadify_script(request):  
-     if request.method == 'POST':
-     
-         files = request.FILES.getlist('uploadFile')
-         print '--------------all files-----------',files[0]
-         print '--------------all files-----------',files
-         for f in files:
-             print '----------file name-----------',f.name
-             with open('/tmp/'+f.name,'wb+') as des:
-                 for chunk in f.chunks():
-                     des.write(chunk)
- 
-     return HttpResponse('upload successfully')  
-  
-def profile_upload(file):  
-    '''''文件上传函数'''  
-    if file:  
-        path=os.path.join(settings.MEDIA_ROOT,'upload')  
-        #file_name=str(uuid.uuid1())+".jpg"  
-        file_name=str(uuid.uuid1())+'-'+file.name  
-        #fname = os.path.join(settings.MEDIA_ROOT,filename)  
-        path_file=os.path.join(path,file_name)  
-        fp = open(path_file, 'wb')  
-        for content in file.chunks():   
-            fp.write(content)  
-        fp.close()  
-        return (True,file_name) #change  
-    return (False,file_name)   #change  
-  
-#用户管理-添加用户-删除附件  
- 
-#@csrf_exempt  
-#@requires_csrf_token
-def profile_delte(request):  
-    del_file=request.POST.get("delete_file",'')  
-    if del_file:  
-        path_file=os.path.join(settings.MEDIA_ROOT,'upload',del_file)  
-        os.remove(path_file)
-##uploadfy over
-## update some files by select some directories
-@login_required(login_url="/login/")
-def update_files_salt(request):
-    data_array = ""
-    client = salt.client.LocalClient()
-    ## the all_dir is the json format, if need dict format, we need to translate all ''to ""
-    all_dir = client.cmd('*', 'cmd.run', ['python /srv/salt/pathtreeview.py'])
-    data_array_length = len(all_dir.values())
-    print '---type--',type(all_dir.values()), '----type---'
-    for i in range(data_array_length):
-        data_array = all_dir.values()[i] + data_array
-    ## there is no need to translate data_array to data array json format
-    data_array = dict = str(data_array).replace('][',',')
-    print '------data-array---',data_array,'---------'
+file_name_list = []
+def uploadify_script(request):
+    if os.path.exists('/tmp/django_tmp/'):
+        #os.system('rm -rf /tmp/django_tmp/*')
+        pass
+    else:
+        os.mkdir('/tmp/django_tmp/')
 
-    salt_select_list_all = SaltCommandMethod()
-    print '-----------salt method selected list------',salt_select_list_all,'-----sss-----'
     if request.method == 'POST':
-        form = SaltUserFileForm(request.POST,request.FILES)
-        if form.is_valid():
-            #upload_file = form.cleaned_data['upload_file']
-            upload_file1 = request.FILES.getlist('uploadFile')
-            print '--|||||||||||||||||||||||||---multi files-------',upload_file1
-            ##for i in upload_file
-            ##    dist_dir = open('/tmp/' + f.name,'wb+')
-            ##    print i
-            ##    for chunk in f.chunks():
-            ##        dist_dir.write(chunk)
-            ##    dist_dir.close()
-            #update_dir = form.cleaned_data['update_dir']
-            salt_command = form.cleaned_data['salt_command']
-            print '`````````````````````',salt_command
-            #salt_host = form.cleaned_data['salt_host']
-            salt_command_list = request.POST.get('salt_select_list_all')
-            print '----------ssssssssssssalt list command------',salt_command_list,'`````-------------`````'
-            content = json.loads(json_data)
-            content1 = content[1]
-            server_length = len(content)
+        files = request.FILES.getlist('uploadFile')
+        for f in files:
+            file_name_list.append(f.name)
+            with open('/tmp/'+'/django_tmp/'+ f.name,'wb+') as des:
+                for chunk in f.chunks():
+                    des.write(chunk)
+    response_data = {}
+    response_data['filename'] = file_name_list
+    return HttpResponse(json.dumps(file_name_list))
+  
+@login_required(login_url="/login/")
+@permission_required('mycmd.delete_userdellist')
+def update_files_salt(request):
+#    os.system('rm -rf /tmp/django_tmp/*')
+    #create_dir = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
+    #print os.mkdir('/tmp/' + create_dir)
+    length = len(file_name_list)
+    for i in range(length):
+        file_name_list.pop()
+    ## the all_dir is the json format, if need dict format, we need to translate all ''to ""
 
+    if request.method == 'POST':
+        #form = SaltUserFileForm(request.POST,request.FILES)
+        #form = UpdateFiles(request.POST)
+        update = UpdateFilesDB(request.POST)
+        '''if form.is_valid():
+            is_all_gameserver = request.POST.getlist('all_gameserver') 
+            input_gameserver_id = request.POST.get('input_gameserver')
+            update_type = request.POST.get('types')
+            file = UpdateFilesDB()
 
-            file = SaltUserFile()
-            file.upload_file = upload_file
-            #file.update_dir = update_dir
-            file.salt_command = salt_command
-            #file.salt_host = salt_host
+            file.is_all_gameserver = is_all_gameserver
+            file.input_gameserver_id = input_gameserver_id
+            file.update_type = update_type
+
             file.save()
-            ## when you want to distract file name from your path, you need to translate it to str first, or it will occur error
-            file_name_str = str(file.upload_file)
-            ## os.path.basename can be used to get rid of path dir to get filename, it needs to import os
-            file_name = os.path.basename(file_name_str)
-##            file_abs_dir = '/usr/local/src/cmdb/saltcmd/upload/'+ file_name
-            file_abs_dir = '/tmp/'+ file_name
-            os.path.exists(file_abs_dir)
-            shutil.move(file_abs_dir ,"/srv/salt/")
-            srcsaltfiledir = 'salt://' + file_name
+
+           ## file_name_list = os.path.basename(file_name_str)
+           ## file_abs_dir = '/tmp/'+ file_name
+           ## print '------------file_abs_dir----',file_abs_dir
+           ## shutil.move(file_abs_dir ,"/srv/salt/")
+           ## srcsaltfiledir = 'salt://' + file_name
 
             # every gameserver which in every server need to be updated
-            for x in range(server_length):
-                if True in content[x].values():
-                    physical_server = content[x]["name"]
-                    gameserver_length = len(content[x]["children"])
-                    for y in range(gameserver_length):
-                        if True in content[x]["children"][y].values():
-                            gameserver_list = content[x]["children"][y]["name"]
-                            distsaltfiledir = '/opt/' + gameserver_list + '/' + file_name
-                            print distsaltfiledir
-                            ret = client.cmd(physical_server,salt_command,[srcsaltfiledir,distsaltfiledir])
-                        else:
-                            pass
-                    
-            ## ret = client.cmd('*','cp.get_file',[srcsaltfiledir,distsaltfiledir])
-            
             return HttpResponse('uploaded successfully in upload function')
+        else:
+            print '-------------form is not valid-----'
+            print request.POST.getlist('all_gameserver')
+            print request.POST.get('input_gameserver')
+            print  request.POST.get('types')
+            ### file = UpdateFilesDB()
+            ### file.is_all_gameserver = is_all_gameserver
+            ### file.input_gameserver_id = input_gameserver_id
+            ### file.update_type = update_type
+            ### file.save()
+        '''
+        create_dir = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
+        print os.mkdir('/data/upload/' + create_dir)
+
+        files = os.listdir('/tmp/django_tmp/')
+        for file in files:
+            shutil.move('/tmp/django_tmp/'+file ,"/data/upload/" + create_dir)
+
+        files = os.listdir("/data/upload/" + create_dir)
+        config_files = []
+        beam_files = []
+
+        '''遍历文件，将文件复制到特定的目录'''
+        for file in files:
+            if os.path.splitext(file)[1][1:] == 'config':
+                config_files.append(file)
+                if file == 'data_box.config':
+                    shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/config/moduleconfig/" + file)
+                else:
+                    shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/config/activityconfig/" + file)
+            elif os.path.splitext(file)[1][1:] == 'beam':
+                beam_files.append(file)
+                shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/ebin/" + file)
+            else:
+                pass
+
+        '''更新文件'''
+        outcome = []
+        if len(config_files):
+            outcome4 = os.system('/usr/local/src/upload_conf.sh')
+            outcome.append(outcome4)
+            if "data_discount.config" in files:
+                outcome1 = os.system('/usr/local/src/exe1.sh')
+                outcome2 = os.system('/usr/local/src/exe2.sh')
+                outcome.append(outcome1)
+                outcome.append(outcome2)
+            else:
+                outcome3 = os.system('/usr/local/src/exe2.sh')
+                outcome.append(outcome3)
+        elif len(beam_files):
+            outcome5 = os.system('/usr/local/src/upload_beam.sh')
+            outcome.append(outcome5)
+        else:
+            return render_to_response('error.html')
+
+        is_all_gameserver = request.POST.get('all_gameserver')
+        input_gameserver_id = request.POST.get('input_gameserver')
+        if is_all_gameserver == "null":
+            print '---all server is null--------'
+        update_type = request.POST.get('types')
+        if is_all_gameserver == "all_gameserver":
+            is_all_gameserver_status = "Yes"
+            input_gameserver_id = "null"
+        else:
+            if input_gameserver_id:
+                is_all_gameserver_status = "No"
+            else:
+                return render_to_response('error.html')
+
+        if "False" in outcome:
+            outcome = "failed"
+        else:
+            outcome = "successed"
+
+        if update_type:
+            pass
+        else:
+            return render_to_response('error.html')
+
+        user_id = request.session.items()[1][1]
+        username = User.objects.get( id = user_id )
+
+        update = UpdateFilesDB()
+        update.is_all_gameservers = is_all_gameserver_status
+        update.input_gameserver_id = input_gameserver_id
+        update.update_type =  update_type
+        update.update_by = username
+        update.update_files_dir = '/data/upload/' + create_dir
+        update.update_files = files
+        update.update_outcome = outcome
+        update.save()
+
+
     else:
-        form = SaltUserFileForm() #初始化空表单
-    return render_to_response('display.html', {'form': form,'List': data_array,'salt_select_list_all':salt_select_list_all})
+        update = UpdateFilesDB()
+
+    update_log = UpdateFilesDB.objects.order_by('-update_time')[:5]
+    perm_all = Permission.objects.all()
+    return render_to_response('display.html', {'form': update,'outcomes':update_log,'perm_all':perm_all},context_instance=RequestContext(request))
 
 #@permission_required('mycmd.delete_userdellist')
 @login_required(login_url="/login/")
@@ -576,17 +616,17 @@ def user_list(request):
     print group_all
     user_all = User.objects.all()
     print '------------user all---------',user_all
-    user = User.objects.get(id=45)
-    print '------------group all--------',user
+    #user = User.objects.get(id=45)
+    #print '------------group all--------',user
     #print '--------------users group------', user.groups.through.get()
     #user_group = User.groups.objects.all()
     #print user_group
     
-    print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
+    #print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
     #Permission.objects.create(content_type_id=10,codename='codename',name='wangjuan')
     ## delete permission called codename, which can find in the mysqldb in table auth_permissions
     #Permission.objects.get(codename='codename').delete()
-    print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
+    #print 'wangjuans all perms -------',User.objects.get(username='wangjuan').user_permissions.values()
 
     ##create users
     ## jack = User.objects.create_user('jack', 'jack@example.com', 'topsecretagentjack')
@@ -702,23 +742,46 @@ def user_del(request):
    
     if request.method == "GET":
     #    print 'get method'
-        user_id = request.GET.get('id')
-        user_id_list = user_id.split(',')
+        user_del_id = request.GET.get('id')
+        user_del_id_list = user_id.split(',')
 
     elif request.method == "POST":
     #    print 'post method'
-        user_id = request.POST.get('id')
-        user_id_list = user_id.split(',')
+        user_del_id = request.POST.get('id')
+        user_del_id_list = user_id.split(',')
     else:
     #    print 'error'
         return HttpResponse('错误请求')
 
     #print 'user id',user_id
     #print 'user id list',user_id_list
-    del_object = UserDelList.objects.create(deleted_user_id_id=user_id,deleted_by=username,delete_result='success')
+    #del_object = UserDelList.objects.create(deleted_user_id_id=user_id,deleted_by=username,delete_result='success')
     #assign_perm('mycmd.delete_userdellist',username)
+    
+    user_del_username = User.objects.get( id = user_del_id )
+    print 'user_del_username',user_del_username
 
+    conf = ConfigParser.SafeConfigParser()
+    conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
+    ldap_server = conf.get("ldap","server")
+    ldap_admin_user = conf.get("ldap", "admin_user")
+    ldap_pass = conf.get("ldap", "pass")
+    ldap_dn = conf.get("ldap", "dn")
 
+    #connect to servers
+    server = Server(ldap_server)
+    conn = Connection(server,ldap_admin_user, ldap_pass, auto_bind=True)
+    #conn.bind()
+
+    user_dn = 'uid=' + str(user_del_username) + ',' + 'ou=People,ou=privileges,' + str(ldap_dn)
+    print user_dn
+
+    conn.bind()
+    conn.delete(user_dn)
+    #conn.delete(user_dn)  ##comparing with add operation, delete just need dn to delete a user
+    conn.unbind()
+
+    del_object = UserDelList.objects.create(deleted_user_id_id=user_del_id,deleted_by=username,delete_result='success')
     del_object.del_user_task()
     
 
