@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Skymoons | SAplatform</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+  <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css">
+  <link href="/static/image/uploadify/uploadify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script> 
+  <script type="text/javascript" src="/static/image/uploadify/jquery.uploadify-3.1.min.js"></script>
+  
+  <script src="/static/js/jquery.ztree.all-3.5.min.js"></script>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <header class="main-header">
+  
+    <a href="/index/" class="logo">
+      <span class="logo-mini"><b>A</b>LT</span>
+      <span class="logo-lg"><b>Skymoons</b>SA</span>
+    </a>
+
+    <nav class="navbar navbar-static-top" role="navigation">
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+    </nav> 
+  </header>
+
+  <aside class="main-sidebar">
+    <section class="sidebar">
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="/static/dist/img/user2-160x160.jpg" class="img-thumbnail" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>Skymoons</p>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+      <!-- search form -->
+      <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+      </form>
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+        {% block sidebar %}
+
+        <li class="header">MAIN NAVIGATION</li>
+
+        <li class="treeview">
+          <a href="http://10.10.11.69/index/">
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+          </a>
+        </li>
+
+        <li>
+          <li class="treeview">
+          <a href="http://10.10.11.69/general/">
+            <i class="fa fa-th"></i> <span>Servers status</span>
+          </a>
+        </li>
+
+        <li class="treeview">
+          <a href="http://10.10.11.69/dir/">
+            <i class="fa fa-edit"></i> <span>Display files</span>
+          </a>
+        </li>
+
+       <li class="active treeview">
+           <a href="http://10.10.11.69/userlist/">                    
+               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-angle-left pull-right"></i>               
+           </a>
+           <ul class="treeview-menu">
+               <li class="treeview-menu">
+                   <a href="/admin">admin</a>
+<!--                   <i class="fa fa-angle-left pull-right"></i>
+-->
+                   <ul class="treeview-menu">
+                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
+                       <li class="treeview-menu">
+                           <a href="/admin/role">                                    
+                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                           </a>
+                           <ul class="treeview-menu">
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>
+                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>
+                           </ul>
+                       </li>
+                   </ul>
+               </li>
+           </ul>
+       </li>
+        {% endblock %}
+      </ul>
+    </section>
+  </aside>
+<!--
+    <div class="wrapper wrapper-content animated fadeInRight">
+-->
+  <div class="content-wrapper">
+    <section class="content">
+
+        <div class="box-body table-responsive no-padding">
+
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>编辑用户信息</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <form method="post" id="userForm" class="form-horizontal" action="/useredit/?id={{ user.id }}">
+                            {% if error %}
+                                <div class="alert alert-warning text-center">{{ error }}</div>
+                            {% endif %}
+                            {% if msg %}
+                                <div class="alert alert-success text-center">{{ msg }}</div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="username" class="col-sm-2 control-label">用户名<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8">
+                                    <input id="username" name="username" placeholder="Username" type="text" class="form-control" value="{{ user.username }}" readonly>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="password" class="col-sm-2 control-label">密码</label>
+                                <div class="col-sm-8">
+                                    <input id="password" name="password" placeholder="Password" type="password" class="form-control">
+                                    <span class="help-block m-b-none">
+                                        登陆web的密码（如不修改请留空）
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">姓名<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8">
+                                    <input id="name" name="name" placeholder="Name" type="text" class="form-control" value="{{ user.name }}">
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="groups" class="col-sm-2 control-label">小组</label>
+                                <div class="col-sm-8">
+                                    <select id="groups" name="groups" class="form-control m-b" multiple size="12">
+                                        {% for group in group_all %}
+                                            {% if group.id in groups_str %}
+                                                <option value="{{ group.id }}" selected>{{ group.name }}</option>
+                                            {% else %}
+                                                <option value="{{ group.id }}">{{ group.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="role" class="col-sm-2 control-label">权限<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8">
+                                    {% for r, role_name in user_role.items %}
+                                        <div class="col-sm-3">
+                                            <div class="radio i-checks">
+                                                <label><input type="radio" value="{{ r }}" class="role" name="role" {% ifequal r user.role %} checked {% endifequal %}>{{ role_name }}</label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="email" class="col-sm-2 control-label">Email<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8">
+                                    <input id="email" name="email" type="email" placeholder="Email" class="form-control" value="{{ user.email }}" >
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">额外</label>
+                                <div class="col-sm-2">
+                                    <div class="checkbox i-checks">
+                                        <label><input type="checkbox" value="0" name="extra" {% ifequal user.is_active 1 %} checked {% endifequal %} >启用 </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="checkbox i-checks">
+                                        <label><input type="checkbox" value="1" name="extra">发送邮件 </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-white" type="reset">取消</button>
+                                    <button id="submit_button" class="btn btn-primary" type="submit">确认保存</button>
+                                </div>
+                            </div>
+                        </form></br></br></br></br></br></br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></br>
+</section>
+
+
+<script>
+$('#userForm').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    rules: {
+        check_pass: [/^\w+$/, '数字和字符']
+    },
+    fields: {
+        "username": {
+            rule: "required",
+            tip: "输入用户名",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "name": {
+            rule: "required",
+            tip: "姓名",
+            ok: "",
+            msg: {required: "必须填写"}
+        },
+        "email": {
+            rule: "required",
+            tip: "Email",
+            ok: "",
+            msg: {required: "必须填写"}
+        },
+        valid: function (form) {
+            form.submit();
+        }
+    }
+});
+$("document").ready(function(){
+    $("input.role").click(function(){
+        if($("input.role[value=GA]").is( ":checked" )){
+            $("#admin_groups").css("display", 'block');
+        }
+        else {
+            $("#admin_groups").css("display", 'none');
+        }
+    })
+})
+</script>
+</body>
+</html>

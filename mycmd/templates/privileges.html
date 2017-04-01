@@ -1,0 +1,106 @@
+{% extends "index2.html" %}
+{% block title %}Skymoons{% endblock %}
+
+
+  <aside class="main-sidebar">
+    <section class="sidebar">
+      <ul class="sidebar-menu">
+        {% block sidebar %}
+        <li class="header">MAIN NAVIGATION</li>
+        <li class="treeview">
+          <a href="http://10.10.11.69/index/">
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+          </a>
+        </li>
+
+        <li>
+          <li class="treeview">
+          <a href="http://10.10.11.69/general/">
+            <i class="fa fa-th"></i> <span>Servers status</span>
+          </a>
+        </li>
+
+        <li class="treeview">
+          <a href="http://10.10.11.69/dir/">
+            <i class="fa fa-edit"></i> <span>Display files</span>
+          </a>
+        </li>
+
+       <li class="treeview">               
+           <a href="http://10.10.11.69/privileges/">                    
+               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-angle-left pull-right"></i>               
+           </a>               
+           <ul class="treeview-menu">                   
+               <li class="treeview">                        
+                   <a href="/admin">admin</a>                        
+                   <ul class="active treeview-menu">                            
+                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>                            
+                       <li class="treeview">                                
+                           <a href="/admin/role">                                    
+                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                           </a>                                
+                           <ul class="treeview-menu">                                    
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>                                    
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>                                    
+                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>                                    
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>                                    
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>                                
+                           </ul>                           
+                       </li>                        
+                   </ul>                    
+               </li>                
+           </ul>            
+       </li>        
+       {% endblock %}
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+    {% block content-header %}
+      <h1>
+        User or Group management
+        <small>Version 1.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Privileges management</li>
+      </ol>
+     {% endblock %}
+    </section>
+    <section class="content">
+    {% block content %}
+        <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+            <tr>
+              <th>ID</th>
+              <th>username</th>
+              <th>email</th>
+              <th>is_staff</th>
+              <th>is_active</th>
+              <th>date_joined</th>
+            </tr>
+                      {% for result in results %}
+                      <tr>
+              <td>{{result.id}}</td>
+              <td>{{result.username}}</td>
+              <td>{{result.email}}</td>
+              <td>{{result.is_staff}}</span></td>
+              <td>{{result.is_active}}</td>
+              <td>{{result.date_joined}}</td>
+          </tr>
+                      {% endfor %}
+                    </table>
+        </div>
+
+    {% endblock %}
+    </section>
+
+    <!-- /.content -->
+  </div>
+
