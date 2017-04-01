@@ -210,16 +210,24 @@ def uploadify_script(request):
     else:
         os.mkdir('/tmp/django_tmp/')
 
+    uploadfilename = []
     if request.method == 'POST':
         files = request.FILES.getlist('uploadFile')
         for f in files:
             file_name_list.append(f.name)
+            tmpname = '<label id="showFile" name="showFile" class="badge bg-light-grey" font size="3" color="black">' + f.name + '</label></br>'
+            #tmpname = f.name
+            uploadfilename.append(tmpname)
             with open('/tmp/'+'/django_tmp/'+ f.name,'wb+') as des:
                 for chunk in f.chunks():
                     des.write(chunk)
     response_data = {}
-    response_data['filename'] = file_name_list
-    return HttpResponse(json.dumps(file_name_list))
+    perm_all = Permission.objects.all()
+    
+
+    return HttpResponse(uploadfilename)
+    '''return rendertoresponse '''
+    #return render_to_response('display.html', {'filenames': uploadfilename,'perm_all':perm_all},context_instance=RequestContext(request))
   
 @login_required(login_url="/login/")
 @permission_required('mycmd.delete_userdellist')
@@ -293,8 +301,28 @@ def update_files_salt(request):
                 pass
 
         '''更新文件'''
+        '''首先对输入的数据进行校验'''
+        is_all_gameserver = request.POST.get('all_gameserver')
+        input_gameserver_id = request.POST.get('input_gameserver')
+        update_type = request.POST.get('types')
+
+        if is_all_gameserver == "all_gameserver":
+            is_all_gameserver_status = "Yes"
+            input_gameserver_id = "all gameservers"
+        else:
+            if input_gameserver_id:
+                is_all_gameserver_status = "No"
+            else:
+                return render_to_response('error.html')
+        if update_type:
+            pass
+        else:
+            return render_to_response('error.html')
+
+        '''执行脚本并记录运行结果'''
+        '''执行的时候若返回32256代码则表示无权限执行'''
         outcome = []
-        if len(config_files):
+        if config_files:
             outcome4 = os.system('/usr/local/src/upload_conf.sh')
             outcome.append(outcome4)
             if "data_discount.config" in files:
@@ -305,35 +333,18 @@ def update_files_salt(request):
             else:
                 outcome3 = os.system('/usr/local/src/exe2.sh')
                 outcome.append(outcome3)
-        elif len(beam_files):
+        elif beam_files:
             outcome5 = os.system('/usr/local/src/upload_beam.sh')
             outcome.append(outcome5)
         else:
             return render_to_response('error.html')
-
-        is_all_gameserver = request.POST.get('all_gameserver')
-        input_gameserver_id = request.POST.get('input_gameserver')
-        if is_all_gameserver == "null":
-            print '---all server is null--------'
-        update_type = request.POST.get('types')
-        if is_all_gameserver == "all_gameserver":
-            is_all_gameserver_status = "Yes"
-            input_gameserver_id = "null"
-        else:
-            if input_gameserver_id:
-                is_all_gameserver_status = "No"
-            else:
-                return render_to_response('error.html')
-
+        print '-------------------------------',outcome
+        '''校验脚本执行结果'''
         if "False" in outcome:
             outcome = "failed"
         else:
             outcome = "successed"
 
-        if update_type:
-            pass
-        else:
-            return render_to_response('error.html')
 
         user_id = request.session.items()[1][1]
         username = User.objects.get( id = user_id )
@@ -351,6 +362,7 @@ def update_files_salt(request):
 
     else:
         update = UpdateFilesDB()
+        os.system('rm -rf /tmp/django_tmp/*')
 
     update_log = UpdateFilesDB.objects.order_by('-update_time')[:5]
     perm_all = Permission.objects.all()

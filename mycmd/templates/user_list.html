@@ -136,15 +136,14 @@
       <div class="btn-group">
             {% url view.user_add as theaddpermissionurl %}
             <a class="btn btn-default {% if request.path == theaddpermissonurl %}
-            class="active"
             {% endif %}"
-               href="/permadd" ><span class="active glyphicon glyphicon-edit"></span>权限管理</a>
+               href="/permadd" ><span class="active glyphicon glyphicon-edit" ></span>权限管理</a>
             {% url view.privileges_list as thelistpermissiononurl %}
             <a class="btn btn-default {% if request.path == thelistpermissionurl %}
-            class="active"
             {% endif %}"
                href="/userlist"><span class="glyphicon glyphicon-list"></span>权限列表</a>
       </div></br></br>
+	  
 <!--href={{ thelistpermissiononurl }} maybe useful in the upper side-->
 <!--
     </section>

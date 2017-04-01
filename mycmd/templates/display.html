@@ -195,13 +195,15 @@
 						  <div class="reg-inf">
 							<input type="file" name="uploadFile" id="uploadFile" multiple="" class="pub-btn" style="padding-left: 120px;" />
 							  <div id="fileQueue"></div>
-							  <a href="javascript:$('#uploadFile').uploadify('upload','*')">上传文件</a>
+							  <a href="javascript:$('#uploadFile').uploadify('upload','*')" font="bold">上传文件</a>
 
-							  <a href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a></br></br>
-								 
-								<label id="showFile" name="showFile"></label>
-									{{filename}}
-							   
+							  <a href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a><button id="canceluploadfiles" name="canceluploadfiles" class="label label-warning" ONCLICK="canceluploadfile()">重新上传</button></br>
+
+
+								<label id="showFile" name="showFile" ></label></br>
+									<!-- {{filename}} -->
+								
+
 								<div class="form-group">
 								  <label for="all_gameserver" class="col-sm-2 control-label">所有区服</label>
 								  <input type="checkbox" id="all_gameserver" value="all_gameserver" name="all_gameserver" ONCLICK="checkboxclickone()"></br>
@@ -226,7 +228,12 @@
 						  </div>
 						</span>
 					</div>
-				  <button type="submit" class="btn btn-primary" id="register" >更新</button></br></br>
+				  <div class="form-group">
+					<div class="col-sm-4 col-sm-offset-2">
+						<button class="btn btn-white" type="reset">取消</button>
+						<button type="submit" class="btn btn-primary" id="register" >更新</button></br></br>
+                    </div>
+                  </div>						
 				</form>
 			</div>
         </div>
@@ -382,6 +389,10 @@
             alert("不选择所有区服就可以输入特定的区服");
             }
     };
+	function canceluploadfile(){
+		alert("确定删除刚刚上传的文件？");
+		console.log("执行js");
+	};
 
     function removeHoverDom(treeId, treeNode) {
         $("#addBtn_"+treeNode.tId).unbind().remove();
@@ -434,28 +445,10 @@
                 var data={};
                 data["jsonTree"] = JSON.stringify(nodes,['name','checked','children']);
                 console.log(data["jsonTree"]);
-                console.log(000000);
-                console.log(9999999999);
-                console.log(1 +  "2" + "2");
-                console.log(1 +  +"2" + "2");
-                console.log(1 +  -"1" + "2");
-                console.log(+"1" +  "1" + "2");
-                console.log( "A" - "B" + "2");
-                console.log( "A" - "B" + 2);
             },
         }
     };
 
-    //function getAllChangeNodes(treeId, treeNode) {
-    //   console.log(1999999999991);
-    //   var treeObj = $.fn.zTree.getZTreeObj("tree");
-    //   var nodes = treeObj.getCheckedNodes(true);
-    //   //console.log(nodes);
-    //   $('#mytest').html(JSON.stringify(nodes));
-    //   var data={};
-    //   data["jsonTree"] = JSON.stringify(nodes);
-    //   console.log(data["jsonTree"]);
-    //}
 
     function zTreeOnClick(event, treeId, treeNode) {
         categoryTree.selectNode(treeNode);
@@ -464,16 +457,6 @@
 
     //var zNodes =[
     //    {id:1, pId:0, name:"192.168.30.147"},
-    //    {id:101, pId:1, name:"gameserver1 v1.1"},
-    //    {id:102, pId:1, name:"gameserver2 v1.1"},
-    //    {id:103, pId:1, name:"gameserver3 v1.1"},
-    //    {id:104, pId:1, name:"gameserver4 v1.1"},
-    //    {id:105, pId:1, name:"gameserver5 v1.1"},
-
-    //    {id:6, pId:0, name:"192.168.30.148"},
-    //    {id:601, pId:6, name:"gameserver11 v1.2"},
-    //    {id:602, pId:6, name:"gameserver12 v1.2"},
-    //    {id:603, pId:6, name:"gameserver13 v1.2"}
     //];
     //var zNodes = {{ List|safe }};
     var zNodes =[{id:1, pId:0, name:"192.168.30.147"}];
@@ -540,7 +523,7 @@
                 $("#showFile").text(data);
             } else {
                 $("#hidFile").val($("#hidFile").val() + "|" + data + "");
-                $("#showFile").text($("#showFile").text() + ";" + data + "");
+                $("#showFile").html($("#showFile").html() + "" + data + "");
             }
         },
         'onUploadError': function (file, errorCode, errorMsg, errorString, swfuploadifyQueue) {
