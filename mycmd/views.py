@@ -228,7 +228,25 @@ def uploadify_script(request):
     return HttpResponse(uploadfilename)
     '''return rendertoresponse '''
     #return render_to_response('display.html', {'filenames': uploadfilename,'perm_all':perm_all},context_instance=RequestContext(request))
-  
+def get_gameserver_list(dir_path):
+    local_ip = os.popen("ifconfig | grep \"inet addr\"|awk '{print $2}'|awk -F \":\" '{print $2}'|grep -E \"^10.|^192.\"").readline().rstrip()
+    if os.path.exists(dir_path):
+        jsondict = dict()
+        jsonlist = list()
+        for dirname in os.listdir(dir_path):
+            if "gameserver" in dirname:
+                gameserverid = dirname.lstrip('gameserver')
+                jsonlist.append(gameserverid)
+            else:
+                pass
+        jsondict = {"serverip": local_ip, "gameserverid": jsonlist}
+        return jsondict
+    else:
+        jsondict = {"serverip": local_ip, "gameserverid": list()}
+        return jsondict
+
+
+
 @login_required(login_url="/login/")
 @permission_required('mycmd.delete_userdellist')
 def update_files_salt(request):
@@ -283,8 +301,8 @@ def update_files_salt(request):
             shutil.move('/tmp/django_tmp/'+file ,"/data/upload/" + create_dir)
 
         files = os.listdir("/data/upload/" + create_dir)
-        config_files = []
-        beam_files = []
+        config_files = list()
+        beam_files = list()
 
         '''遍历文件，将文件复制到特定的目录'''
         for file in files:
@@ -299,11 +317,18 @@ def update_files_salt(request):
                 shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/ebin/" + file)
             else:
                 pass
+        print '---------------------config file---------------',config_files
+        print '---------------------beam file---------------',beam_files
 
         '''更新文件'''
         '''首先对输入的数据进行校验'''
         is_all_gameserver = request.POST.get('all_gameserver')
         input_gameserver_id = request.POST.get('input_gameserver')
+
+        '''对输入的内容转化成数组形式'''
+        input_servers= str(input_gameserver_id)
+        inputgmsvlist = input_servers.split(",")
+
         update_type = request.POST.get('types')
 
         if is_all_gameserver == "all_gameserver":
@@ -320,26 +345,149 @@ def update_files_salt(request):
             return render_to_response('error.html')
 
         '''执行脚本并记录运行结果'''
-        '''执行的时候若返回32256代码则表示无权限执行'''
-        outcome = []
+        '''在salt中获取组和组成员'''
+        client = salt.client.LocalClient()
+        result = client.cmd('*','cmd.script',['salt://scripts/getgmlist.py'])
+        print result
+        serverlist=list()
+
+        '''将获得的minion端中的stdout的结果字段转换成为字典并保存进数组中'''
+        for key in result:
+            result_json = str(result[key]['stdout']).replace('\'','\"')
+            '''转换编码'''
+            result_encode = result_json.encode("utf-8")
+            result_dict = json.loads(result_encode)
+            serverlist.append(result_dict)
+        print serverlist
+        inclugmsvid = inputgmsvlist
+        exclugmsvid=list()
+
+        '''生成更新脚本文件'''
+        '''for updatefile in files:
+            for server in serverlist:
+                for i in range(len(server['gameserverid'])):
+                    fopen = open('/tmp/updategameserver.sh','r+')
+                    fopen.read()
+                    gameserver = str(server['gameserverid'][i])
+                    serverip = str(server['serverip'])
+                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ updatefile + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                    fopen.close()
+                    print int(server['gameserverid'][i]),server['serverip']'''
+        
+        '''前端如果传入all则执行所有的更新'''
+        '''前端如果传入不为all则拉取出输入对应的区服和其ip和组成员名称'''
+
+        '''在有config的情况下生成更新脚本文件'''
         if config_files:
-            outcome4 = os.system('/usr/local/src/upload_conf.sh')
-            outcome.append(outcome4)
-            if "data_discount.config" in files:
-                outcome1 = os.system('/usr/local/src/exe1.sh')
-                outcome2 = os.system('/usr/local/src/exe2.sh')
-                outcome.append(outcome1)
-                outcome.append(outcome2)
-            else:
-                outcome3 = os.system('/usr/local/src/exe2.sh')
-                outcome.append(outcome3)
-        elif beam_files:
-            outcome5 = os.system('/usr/local/src/upload_beam.sh')
-            outcome.append(outcome5)
+            os.system('rm -rf /tmp/updategameservercfg.sh')
+            os.system('rm -rf /tmp/updategameservercfg_exe.sh')
+            os.system('touch /tmp/updategameservercfg.sh')
+            os.system('touch /tmp/updategameservercfg_exe.sh')
+
+            for updatefile in config_files:
+                update = os.path.splitext(updatefile)[0][0:]
+                for server in serverlist:
+                    for i in range(len(server['gameserverid'])):
+                        gameserver = str(server['gameserverid'][i])
+                        serverip = str(server['serverip'])
+                        if is_all_gameserver_status == "Yes":
+                            if gameserver not in exclugmsvid:
+                                fopen = open('/tmp/updategameservercfg.sh','r+')
+                                fopen.read()
+                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                fopen.close()
+                                '''exe1文件生成'''
+                                '''if "data_discount.config" in files:
+                                    fopen = open('/tmp/updategameservercfg_exe.sh','r+')
+                                    fopen.read()
+                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+
+                                    fopen.close()'''
+
+
+                            else:
+                                '''不添加更新脚本流程'''
+                                pass
+                        else:
+                            if gameserver in inclugmsvid:
+                                fopen = open('/tmp/updategameservercfg.sh','r+')
+                                fopen.read()
+                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                fopen.close()
+                                '''if "data_discount.config" in files:
+                                    fopen = open('/tmp/updategameservercfg_exe.sh','r+')
+                                    fopen.read()
+                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                    fopen.close()'''
+
+                            else:
+                                pass
+        if "data_discount.config" in files:
+            for server in serverlist:
+                for i in range(len(server['gameserverid'])):
+                    gameserver = str(server['gameserverid'][i])
+                    serverip = str(server['serverip'])
+                    if is_all_gameserver_status == "Yes":
+                        if gameserver not in exclugmsvid:
+                            fopen = open('/tmp/updategameservercfg_exe.sh','r+')
+                            fopen.read()
+                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                            fopen.close()
+                        else:
+                            pass
+                    else:
+                        if gameserver in inclugmsvid:
+                            fopen = open('/tmp/updategameservercfg_exe.sh','r+')
+                            fopen.read()
+                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                            fopen.close()
+                        else:
+                            pass
+
         else:
+            pass
+
+        '''beam文件存在时的更新'''
+        if beam_files:
+            os.system('rm -rf /tmp/updategameserverbm.sh')
+            os.system('touch /tmp/updategameserverbm.sh')
+
+            for updatefile in beam_files:
+                update = os.path.splitext(updatefile)[0][0:]
+                for server in serverlist:
+                    for i in range(len(server['gameserverid'])):
+                        gameserver = str(server['gameserverid'][i])
+                        serverip = str(server['serverip'])
+                        if is_all_gameserver_status == "Yes":
+                            if gameserver not in exclugmsvid:
+                                fopen = open('/tmp/updategameserverbm.sh','r+')
+                                fopen.read()
+                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l [" + update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                fopen.close()
+
+                            else:
+                                pass
+                        else:
+                            if gameserver in inclugmsvid:
+                                fopen = open('/tmp/updategameserverbm.sh','r+')
+                                fopen.read()
+                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l [" + update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
+                                fopen.close()
+                            else:
+                                pass
+
+        else:
+            pass
+        if not beam_files and not config_files:
             return render_to_response('error.html')
-        print '-------------------------------',outcome
+        '''print '-------------------------------',outcome'''
         '''校验脚本执行结果'''
+        '''执行脚本'''
+        outcome=[]
         if "False" in outcome:
             outcome = "failed"
         else:
