@@ -377,12 +377,36 @@ def update_files_salt(request):
         '''前端如果传入all则执行所有的更新'''
         '''前端如果传入不为all则拉取出输入对应的区服和其ip和组成员名称'''
 
+        '''生成同步脚本文件'''
+        os.system('echo "#!/bin/bash" > /tmp/rsyncgameserverfile.sh')
+        os.system('echo "" > /var/log/pkq_hf_rsync.log')
+
+        for server in serverlist:
+            for i in range(len(server['gameserverid'])):
+                gameserver = str(server['gameserverid'][i])
+                serverip = str(server['serverip'])
+                if is_all_gameserver_status == "Yes":
+                    if gameserver not in exclugmsvid:
+                        fopen = open('/tmp/rsyncgameserverfile.sh','r+')
+                        fopen.read()
+                        fopen.write("/usr/bin/rsync -vau --progress /root/rsync/gameserver/ " + serverip + ":/root/server/gameserver" + gameserver + " >>/var/log/pkq_hf_rsync.log \n")
+                        fopen.close()
+                    else:
+                        pass
+                else:
+                    if gameserver in inclugmsvid:
+                        fopen = open('/tmp/rsyncgameserverfile.sh','r+')
+                        fopen.read()
+                        fopen.write("/usr/bin/rsync -vau --progress /root/rsync/gameserver/ " + serverip + ":/root/server/gameserver" + gameserver + " >>/var/log/pkq_hf_rsync.log \n")
+                        fopen.close()
+                    else:
+                        pass
+
+
         '''在有config的情况下生成更新脚本文件'''
         if config_files:
-            os.system('rm -rf /tmp/updategameservercfg.sh')
-            os.system('rm -rf /tmp/updategameservercfg_exe.sh')
-            os.system('touch /tmp/updategameservercfg.sh')
-            os.system('touch /tmp/updategameservercfg_exe.sh')
+            os.system('echo "#!/bin/bash" > /tmp/updategameservercfg.sh')
+            os.system('echo "#!/bin/bash" > /tmp/updategameservercfg_exe.sh')
 
             for updatefile in config_files:
                 update = os.path.splitext(updatefile)[0][0:]
@@ -415,15 +439,10 @@ def update_files_salt(request):
                                 fopen.read()
                                 fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
                                 fopen.close()
-                                '''if "data_discount.config" in files:
-                                    fopen = open('/tmp/updategameservercfg_exe.sh','r+')
-                                    fopen.read()
-                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                    fopen.close()'''
 
                             else:
                                 pass
+
         if "data_discount.config" in files:
             for server in serverlist:
                 for i in range(len(server['gameserverid'])):
@@ -453,8 +472,7 @@ def update_files_salt(request):
 
         '''beam文件存在时的更新'''
         if beam_files:
-            os.system('rm -rf /tmp/updategameserverbm.sh')
-            os.system('touch /tmp/updategameserverbm.sh')
+            os.system('echo "#!/bin/bash" > /tmp/updategameserverbm.sh')
 
             for updatefile in beam_files:
                 update = os.path.splitext(updatefile)[0][0:]
