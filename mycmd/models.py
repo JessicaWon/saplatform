@@ -198,11 +198,13 @@ class UpdateFiles(forms.Form):
 class UpdateFilesDB(models.Model):
     update_time = models.DateTimeField(default=datetime.now)
     is_all_gameservers = models.CharField(max_length=128, unique=False)
-    input_gameserver_id = models.CharField(max_length=32, unique=False)
+    input_gameserver_id = models.CharField(max_length=1024, unique=False)
     update_type = models.CharField(max_length=128, unique=False)
     update_files_dir = models.CharField(max_length=128, unique=False)
     update_files = models.CharField(max_length=128, unique=False)
     update_outcome = models.CharField(max_length=64, unique=False)
+    update_fail_server = models.CharField(max_length=1024, unique=False)
+    update_fail_details = models.TextField(unique=False)
     update_by = models.CharField(max_length=128, unique=False)
     def __unicode__(self):
         return self.name

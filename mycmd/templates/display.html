@@ -207,6 +207,7 @@
 								<div class="form-group">
 								  <label for="all_gameserver" class="col-sm-2 control-label">所有区服</label>
 								  <input type="checkbox" id="all_gameserver" value="all_gameserver" name="all_gameserver" ONCLICK="checkboxclickone()"></br>
+								  <input id="exclu_gameserver" type="text" name="exclu_gameserver" class="form-control" placeholder="排除区服id，格式为2,10，区服中间以英文逗号分隔,可以为空" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')" style="display:none;width:400px"/>
 								</div></br>
 								<div class="form-group">
 								  <label for="id_gameserver" class="col-sm-2 control-label">输入区服</label>
@@ -232,6 +233,7 @@
 					<div class="col-sm-4 col-sm-offset-2">
 						<button class="btn btn-white" type="reset">取消</button>
 						<button type="submit" class="btn btn-primary" id="register" >更新</button></br></br>
+
                     </div>
                   </div>						
 				</form>
@@ -278,11 +280,11 @@
                     <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
                     <td class="mailbox-name"><a href="/userlist/">更新工程师</a></td>
                     <td class="mailbox-subject">是否为所有服更新</td>
-					<td class="mailbox-subject">此次更新覆盖区服范围为</td>
+					<td class="mailbox-subject">更新区服范围</td>
 					<td class="mailbox-subject">更新文件路径</td>
                     <td class="mailbox-attachment">更新目的为</td>
                     <td class="mailbox-date">更新是否成功</td>
-					<td class="mailbox-date">更新时间为</td>
+					<td class="mailbox-date">更新失败区服数</td>
                   </tr>				  
 				  {% for outcome in outcomes %}
 				  {% if forloop.first %}
@@ -290,13 +292,14 @@
                     <td><input type="checkbox" bgcolor="black"></td>
 <!--                    <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
 					<td class="label label-success">最新更新</span>
-                    <td class="mailbox-name" ><a href="/userlist/">{{outcome.update_by}}</a></td>
+					<!--<a class="tag-link-94 tag-link-position-3">新</a>-->
+                    <td class="mailbox-name" ><a href="/userlist/" title={{outcome.update_time}}>{{outcome.update_by}}</a></td>
                     <td class="mailbox-subject">{{outcome.is_all_gameservers}}</td>
 					<td class="mailbox-subject">{{outcome.input_gameserver_id}}</td>
 					<td class="mailbox-subject">{{outcome.update_files_dir}}下{{outcome.update_files}}</td>
                     <td class="mailbox-attachment">{{outcome.update_type}}</td>
                     <td class="mailbox-date">{{outcome.update_outcome}}</td>
-					<td class="mailbox-date">{{outcome.update_time}}</td>
+					<td class="mailbox-date">{{outcome.update_fail_server}}详情</td>
                   </tr>
 				  {% else %}
                   <tr>
@@ -308,7 +311,9 @@
 					<td class="mailbox-subject">{{outcome.update_files_dir}}下{{outcome.update_files}}</td>
                     <td class="mailbox-attachment">{{outcome.update_type}}</td>
                     <td class="mailbox-date">{{outcome.update_outcome}}</td>
-					<td class="mailbox-date">{{outcome.update_time}}</td>
+					<td class="mailbox-date">{{outcome.update_fail_server}}
+
+					</td>
                   </tr>		
 				  {% endif %}				  
 				  {% endfor %}
@@ -316,6 +321,7 @@
                 </table>
                 <!-- /.table -->
               </div>
+
               <!-- /.mail-box-messages -->
             </div>
             <!-- /.box-body -->
@@ -379,6 +385,7 @@
             var test = document.getElementById("all_gameserver").checked;
             console.log(test);
             document.getElementById("input_gameserver").value="";
+			$("#exclu_gameserver").show();
             alert("全选后则不能输入单个的区服");
             
             }
@@ -386,6 +393,7 @@
             document.form.input_gameserver.disabled =false;
             var test = document.getElementById("all_gameserver").checked;
             console.log(test);
+			$("#exclu_gameserver").hide();
             alert("不选择所有区服就可以输入特定的区服");
             }
     };

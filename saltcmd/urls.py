@@ -19,8 +19,8 @@ from mycmd import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^cmd/', views.cmd),
-    url(r'^upload/', views.upload_file),
+    #url(r'^cmd/', views.cmd),
+    #url(r'^upload/', views.upload_file),
     #url(r'^update/', views.update_file),
     #url(r'^dir/', views.update_file),
     url(r'^dir/', views.update_files_salt),
@@ -28,8 +28,8 @@ urlpatterns = [
     url(r'^general/', views.get_server_status),
     url(r'^login/', views.user_login),
     url(r'^logout/', views.user_logout),
-    url(r'^data/', views.get_server_to_be_updated),
-    url(r'^/', views.get_server_to_be_updated),
+    #url(r'^data/', views.get_server_to_be_updated),
+    #url(r'^/', views.get_server_to_be_updated),
     url(r'^upload_script/',views.uploadify_script),
     #url(r'^delete_uploadfile/$', views.profile_delte),
 #    url(r'^account/', include('account.urls')),

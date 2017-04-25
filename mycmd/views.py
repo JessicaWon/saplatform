@@ -43,165 +43,7 @@ from django.http import JsonResponse
 #import json
 #from mycmd.salt_read_dir import *
 # Create your views here.
-class saltAPI:
-    def __init__(self):
-        self.__url = 'https://192.168.30.148:8000'
-        self.__user =  'saltapi'           
-        self.__password = 'woshishui'        
-        self.__token_id = self.salt_login()
 
-    def salt_login(self):
-        params = {'eauth': 'pam', 'username': self.__user, 'password': self.__password}
-        encode = urllib.urlencode(params)
-        obj = urllib.unquote(encode)
-        headers = {'X-Auth-Token':''}
-        url = self.__url + '/login'
-        req = urllib2.Request(url, obj, headers)
-        opener = urllib2.urlopen(req)
-        content = json.loads(opener.read())
-        try:
-            token = content['return'][0]['token']
-            return token
-        except KeyError:
-            raise KeyError
-
-    def postRequest(self, obj, prefix='/'):
-        url = self.__url + prefix
-        headers = {'X-Auth-Token'   : self.__token_id}
-        req = urllib2.Request(url, obj, headers)
-        opener = urllib2.urlopen(req)
-        content = json.loads(opener.read())
-        return content['return']
-    def saltCmd(self, params):
-        obj = urllib.urlencode(params)
-        obj, number = re.subn("arg\d", 'arg', obj)
-        res = self.postRequest(obj)
-        return res
-
-#sapi = saltAPI()
-#testcmd = 'test.ping'
-#
-#params = {'client':'local', 'fun':testcmd, 'tgt':'*'}
-#params = {'client':'local', 'fun':'test.ping', 'tgt':'*'}
-#test = sapi.saltCmd(params)
-
-
-def cmd(request):
-    if request.method=='POST':
-
-        u_file_frompage = UserForm(request.POST,request.FILES)
-
-        if u_file_frompage.is_valid():
-#            u_file = uf.cleaned_data['u_file']
-            return HttpResponse('successully uploaded')
-            username = form.cleaned_data['username']
-            headImg = form.cleaned_data['headImg']
-
-            file = userFile()
-            file.f_title = username
-            file.u_file = headImg
-            file.save()
-        #print username
-
-        u_cmd_frompage = request.POST.get("u_cmd",'')
-        print u_cmd_frompage
-        p1 = userCmd(u_cmd = u_cmd_frompage)
-        p1.save()
-
-        u_host_frompage = request.POST.get("u_host",'')
-        print u_host_frompage
-        #p2 = userHost(u_host = u_host_frompage)
-        #p2.save()
-    #else
-    #    u_file_frompage = userFile()
-    return render(request,'index.html')
-#    return render_to_response(request,'cmd.html',{'u_file_frompage':u_file_frompage}) #some problems               
-
-#sapi = saltAPI()
-#testcmd = userCmd.objects.filter(u_cmd="ping")
-
-#params = {'client':'local', 'fun':testcmd, 'tgt':'*'}
-#test = sapi.saltCmd(params)
-def upload_file(request):
-    if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            username = form.cleaned_data['username']
-            headImg = form.cleaned_data['headImg']
-
-            print username
-            print headImg
-            file = userFile()
-            file.f_title = username
-            file.u_file = headImg
-            file.save()
-            return HttpResponse('uploaded successfully in upload function')
-
-    else:
-        form = userFile()
-    return render_to_response('upload.html', {'form': form})
-
-'''
-def update_file(request):
-    if request.method == 'POST':
-        form = SaltUserFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            upload_file_page = form.cleaned_data['upload_file']
-            update_dir_page = form.cleaned_data['update_dir']
-            salt_command_page = form.cleaned_data['salt_command']
-            salt_host_page = form.cleaned_data['salt_host']
-
-            file = SaltUserFile()
-            file.upload_file = upload_file_page
-            file.update_dir = update_dir_page
-            file.salt_command = salt_command_page
-            file.salt_host = salt_host_page
-            file.save()
-
-            sapi = saltAPI()
-            print sapi
-            params = {'client':'local', 'fun':salt_command_page, 'tgt':'*'}
-            print params
-            u_result = sapi.saltCmd(params)
-            print u_result
-            html = "<html><body>It is now %s.</body></html>" %u_result
-
-
-            return HttpResponse(html)
-    else:
-        form = SaltUserFile()
-    return render_to_response('display.html', {'form': form})
-'''
-
-## the following code is to list contents of directories in a tree-like format
-def post_json_data_to_ztree(request):
-#    jsonlist = []
-    dirpath = '/opt'
-    tmp_list = salt_read_dir.getfile(dirpath)
-    return render_to_response('display.html', {'List': json.dumps(tmp_list)})
-
-## over
-## get all 
-json_data ={}
-def get_server_to_be_updated(request):
-    if request.method == 'POST':
-        ## if you donnot make json_data as a global parameter, then there is a error,and you should announce it before the function by"json_data = {}"
-        global json_data
-        json_data = request.POST['data']
-        print '-------serverlist---',json_data,'-----------'
-        content = json.loads(json_data)
-        ##new add in 0328
-
-    else:
-        return "post json data raised a error"
-    return json_data
-    #    var selected_server_list[];
-## get all server list is over
-
-## uploadfy
-#@csrf_exempt  
-#@requires_csrf_token
 file_name_list = []
 def uploadify_script(request):
     if os.path.exists('/tmp/django_tmp/'):
@@ -223,28 +65,10 @@ def uploadify_script(request):
                     des.write(chunk)
     response_data = {}
     perm_all = Permission.objects.all()
-    
 
     return HttpResponse(uploadfilename)
     '''return rendertoresponse '''
     #return render_to_response('display.html', {'filenames': uploadfilename,'perm_all':perm_all},context_instance=RequestContext(request))
-def get_gameserver_list(dir_path):
-    local_ip = os.popen("ifconfig | grep \"inet addr\"|awk '{print $2}'|awk -F \":\" '{print $2}'|grep -E \"^10.|^192.\"").readline().rstrip()
-    if os.path.exists(dir_path):
-        jsondict = dict()
-        jsonlist = list()
-        for dirname in os.listdir(dir_path):
-            if "gameserver" in dirname:
-                gameserverid = dirname.lstrip('gameserver')
-                jsonlist.append(gameserverid)
-            else:
-                pass
-        jsondict = {"serverip": local_ip, "gameserverid": jsonlist}
-        return jsondict
-    else:
-        jsondict = {"serverip": local_ip, "gameserverid": list()}
-        return jsondict
-
 
 
 @login_required(login_url="/login/")
@@ -262,37 +86,6 @@ def update_files_salt(request):
         #form = SaltUserFileForm(request.POST,request.FILES)
         #form = UpdateFiles(request.POST)
         update = UpdateFilesDB(request.POST)
-        '''if form.is_valid():
-            is_all_gameserver = request.POST.getlist('all_gameserver') 
-            input_gameserver_id = request.POST.get('input_gameserver')
-            update_type = request.POST.get('types')
-            file = UpdateFilesDB()
-
-            file.is_all_gameserver = is_all_gameserver
-            file.input_gameserver_id = input_gameserver_id
-            file.update_type = update_type
-
-            file.save()
-
-           ## file_name_list = os.path.basename(file_name_str)
-           ## file_abs_dir = '/tmp/'+ file_name
-           ## print '------------file_abs_dir----',file_abs_dir
-           ## shutil.move(file_abs_dir ,"/srv/salt/")
-           ## srcsaltfiledir = 'salt://' + file_name
-
-            # every gameserver which in every server need to be updated
-            return HttpResponse('uploaded successfully in upload function')
-        else:
-            print '-------------form is not valid-----'
-            print request.POST.getlist('all_gameserver')
-            print request.POST.get('input_gameserver')
-            print  request.POST.get('types')
-            ### file = UpdateFilesDB()
-            ### file.is_all_gameserver = is_all_gameserver
-            ### file.input_gameserver_id = input_gameserver_id
-            ### file.update_type = update_type
-            ### file.save()
-        '''
         create_dir = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
         print os.mkdir('/data/upload/' + create_dir)
 
@@ -305,32 +98,39 @@ def update_files_salt(request):
         beam_files = list()
 
         '''遍历文件，将文件复制到特定的目录'''
-        for file in files:
-            if os.path.splitext(file)[1][1:] == 'config':
-                config_files.append(file)
-                if file == 'data_box.config':
-                    shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/config/moduleconfig/" + file)
+        for afile in files:
+            if os.path.splitext(afile)[1][1:] == 'config':
+                config_files.append(afile)
+                if afile == 'data_box.config':
+                    shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/config/moduleconfig/" + afile)
                 else:
-                    shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/config/activityconfig/" + file)
-            elif os.path.splitext(file)[1][1:] == 'beam':
-                beam_files.append(file)
-                shutil.copyfile('/data/upload/' + create_dir + '/' + file, "/root/rsync/gameserver/ebin/" + file)
+                    shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/config/activityconfig/" + afile)
+            elif os.path.splitext(afile)[1][1:] == 'beam':
+                beam_files.append(afile)
+                shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/ebin/" + afile)
             else:
                 pass
         print '---------------------config file---------------',config_files
         print '---------------------beam file---------------',beam_files
 
-        '''更新文件'''
+        '''上传的文件'''
+        uploadfiles = config_files + beam_files
         '''首先对输入的数据进行校验'''
         is_all_gameserver = request.POST.get('all_gameserver')
         input_gameserver_id = request.POST.get('input_gameserver')
+        exclu_gameserver_id = request.POST.get('exclu_gameserver')
 
         '''对输入的内容转化成数组形式'''
         input_servers= str(input_gameserver_id)
+        exclu_gameserver = str(exclu_gameserver_id)
+        '''输入的游戏服'''
         inputgmsvlist = input_servers.split(",")
+        exclu_gameserver_id = exclu_gameserver.split(",")
+        print exclu_gameserver_id
 
         update_type = request.POST.get('types')
 
+        '''是否全选游戏服'''
         if is_all_gameserver == "all_gameserver":
             is_all_gameserver_status = "Yes"
             input_gameserver_id = "all gameservers"
@@ -344,193 +144,91 @@ def update_files_salt(request):
         else:
             return render_to_response('error.html')
 
-        '''执行脚本并记录运行结果'''
-        '''在salt中获取组和组成员'''
-        client = salt.client.LocalClient()
-        result = client.cmd('*','cmd.script',['salt://scripts/getgmlist.py'])
-        print result
-        serverlist=list()
-
-        '''将获得的minion端中的stdout的结果字段转换成为字典并保存进数组中'''
-        for key in result:
-            result_json = str(result[key]['stdout']).replace('\'','\"')
-            '''转换编码'''
-            result_encode = result_json.encode("utf-8")
-            result_dict = json.loads(result_encode)
-            serverlist.append(result_dict)
-        print serverlist
+        '''输入的区服和排除的区服'''
         inclugmsvid = inputgmsvlist
         exclugmsvid=list()
+        '''执行脚本并记录运行结果测试数据'''
+        '''exclu1=['1054', '200']
+        inclu1=['100','1051', '1052', '1053']
+        if_all_server1="No"
+        uploadfiles1=['data_box', 'data_fire']'''
 
-        '''生成更新脚本文件'''
-        '''for updatefile in files:
-            for server in serverlist:
-                for i in range(len(server['gameserverid'])):
-                    fopen = open('/tmp/updategameserver.sh','r+')
-                    fopen.read()
-                    gameserver = str(server['gameserverid'][i])
-                    serverip = str(server['serverip'])
-                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ updatefile + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                    fopen.close()
-                    print int(server['gameserverid'][i]),server['serverip']'''
-        
-        '''前端如果传入all则执行所有的更新'''
-        '''前端如果传入不为all则拉取出输入对应的区服和其ip和组成员名称'''
+        client = salt.client.LocalClient()
+        client.cmd('*','saltutil.sync_modules')
+        rsync_result = client.cmd('*','rsyncgmsv.syncgmfile',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #rsyncfiles
+        #result = client.cmd('*','updategmsv.updategm',[exclu1,inclu1,if_all_server1,uploadfiles1]) '''测试数据'''
+        run_rsync = client.cmd('*','cmd.script',['/usr/local/src/rsync.sh'])
+        result = client.cmd('*','updategmsv.updategm',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #updatefiles
+        print result
+        return_info = list()
+        update_other_fail_list = list()
+        update_127fail_list = list()
+        update_1fail_list = list()
+        update_suc_list = list()
+        update_err_list = list()
+        update_err_svid = list()
 
-        '''生成同步脚本文件'''
-        os.system('echo "#!/bin/bash" > /tmp/rsyncgameserverfile.sh')
-        os.system('echo "" > /var/log/pkq_hf_rsync.log')
+        '''将执行更新脚本获得的minion端中的stdout的结果字段转换成为字典并保存进数组中'''
+        for key in result:
+            print key
+            print result[key]
+            #result_json = str(result[key]['stdout']).replace('\'','\"')
+            #result_dict = json.loads(result_json)
+            #for i in result_dict:
+                #return_info.append(i)
+            for i in result[key]:
+                return_info.append(i)
 
-        for server in serverlist:
-            for i in range(len(server['gameserverid'])):
-                gameserver = str(server['gameserverid'][i])
-                serverip = str(server['serverip'])
-                if is_all_gameserver_status == "Yes":
-                    if gameserver not in exclugmsvid:
-                        fopen = open('/tmp/rsyncgameserverfile.sh','r+')
-                        fopen.read()
-                        fopen.write("/usr/bin/rsync -vau --progress /root/rsync/gameserver/ " + serverip + ":/root/server/gameserver" + gameserver + " >>/var/log/pkq_hf_rsync.log \n")
-                        fopen.close()
-                    else:
-                        pass
-                else:
-                    if gameserver in inclugmsvid:
-                        fopen = open('/tmp/rsyncgameserverfile.sh','r+')
-                        fopen.read()
-                        fopen.write("/usr/bin/rsync -vau --progress /root/rsync/gameserver/ " + serverip + ":/root/server/gameserver" + gameserver + " >>/var/log/pkq_hf_rsync.log \n")
-                        fopen.close()
-                    else:
-                        pass
+        '''将获得的结果分类放入各个列表'''
+        for i in return_info:
+            if i['outcome'] == 0:
+                update_suc_list.append(i['gameserverid'])
+            elif i['outcome'] == 1:
+                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
+                update_1fail_list.append(each_outcome)
+            elif i['outcome'] == 127:
+                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
+                update_127fail_list.append(each_outcome)
+            else:
+                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
+                update_other_fail_list.append(each_outcome)
+        update_err_list = update_other_fail_list + update_127fail_list + update_1fail_list
+        print update_err_list
+        for i in update_err_list:
+            err_list = json.loads(i)
+            print err_list['id']
+            update_err_svid.append(err_list['id'].encode("utf-8"))
+        print update_err_svid
 
-
-        '''在有config的情况下生成更新脚本文件'''
-        if config_files:
-            os.system('echo "#!/bin/bash" > /tmp/updategameservercfg.sh')
-            os.system('echo "#!/bin/bash" > /tmp/updategameservercfg_exe.sh')
-
-            for updatefile in config_files:
-                update = os.path.splitext(updatefile)[0][0:]
-                for server in serverlist:
-                    for i in range(len(server['gameserverid'])):
-                        gameserver = str(server['gameserverid'][i])
-                        serverip = str(server['serverip'])
-                        if is_all_gameserver_status == "Yes":
-                            if gameserver not in exclugmsvid:
-                                fopen = open('/tmp/updategameservercfg.sh','r+')
-                                fopen.read()
-                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                fopen.close()
-                                '''exe1文件生成'''
-                                '''if "data_discount.config" in files:
-                                    fopen = open('/tmp/updategameservercfg_exe.sh','r+')
-                                    fopen.read()
-                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                    fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-
-                                    fopen.close()'''
-
-
-                            else:
-                                '''不添加更新脚本流程'''
-                                pass
-                        else:
-                            if gameserver in inclugmsvid:
-                                fopen = open('/tmp/updategameservercfg.sh','r+')
-                                fopen.read()
-                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l ["+ update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                fopen.close()
-
-                            else:
-                                pass
-
-        if "data_discount.config" in files:
-            for server in serverlist:
-                for i in range(len(server['gameserverid'])):
-                    gameserver = str(server['gameserverid'][i])
-                    serverip = str(server['serverip'])
-                    if is_all_gameserver_status == "Yes":
-                        if gameserver not in exclugmsvid:
-                            fopen = open('/tmp/updategameservercfg_exe.sh','r+')
-                            fopen.read()
-                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                            fopen.close()
-                        else:
-                            pass
-                    else:
-                        if gameserver in inclugmsvid:
-                            fopen = open('/tmp/updategameservercfg_exe.sh','r+')
-                            fopen.read()
-                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_remove_all_activity    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                            fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'discount_server  test_reload_activity_config    []' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                            fopen.close()
-                        else:
-                            pass
-
+        if update_err_svid:
+            update_outcome = "fail"
         else:
-            pass
-
-        '''beam文件存在时的更新'''
-        if beam_files:
-            os.system('echo "#!/bin/bash" > /tmp/updategameserverbm.sh')
-
-            for updatefile in beam_files:
-                update = os.path.splitext(updatefile)[0][0:]
-                for server in serverlist:
-                    for i in range(len(server['gameserverid'])):
-                        gameserver = str(server['gameserverid'][i])
-                        serverip = str(server['serverip'])
-                        if is_all_gameserver_status == "Yes":
-                            if gameserver not in exclugmsvid:
-                                fopen = open('/tmp/updategameserverbm.sh','r+')
-                                fopen.read()
-                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l [" + update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                fopen.close()
-
-                            else:
-                                pass
-                        else:
-                            if gameserver in inclugmsvid:
-                                fopen = open('/tmp/updategameserverbm.sh','r+')
-                                fopen.read()
-                                fopen.write("/usr/local/erlang/lib/erlang/lib/erl_interface-3.7.13/bin/erl_call -v -d -s -a 'c l [" + update + "]' -name pmzz" + gameserver + "@" + serverip + "   -c crimoon \n")
-                                fopen.close()
-                            else:
-                                pass
-
-        else:
-            pass
-        if not beam_files and not config_files:
-            return render_to_response('error.html')
-        '''print '-------------------------------',outcome'''
-        '''校验脚本执行结果'''
-        '''执行脚本'''
-        outcome=[]
-        if "False" in outcome:
-            outcome = "failed"
-        else:
-            outcome = "successed"
-
+            update_outcome = "success"
 
         user_id = request.session.items()[1][1]
         username = User.objects.get( id = user_id )
 
         update = UpdateFilesDB()
         update.is_all_gameservers = is_all_gameserver_status
-        update.input_gameserver_id = input_gameserver_id
+        update.input_gameserver_id = set(inputgmsvlist)
         update.update_type =  update_type
         update.update_by = username
         update.update_files_dir = '/data/upload/' + create_dir
         update.update_files = files
-        update.update_outcome = outcome
+        update.update_outcome = update_outcome
+        update.update_fail_server = set(update_err_svid)
+        update.update_fail_details = result
         update.save()
 
 
     else:
         update = UpdateFilesDB()
-        os.system('rm -rf /tmp/django_tmp/*')
+        #os.system('rm -rf /tmp/django_tmp/*') #caution!!
+        shutil.rmtree('/tmp/django_tmp/')
+        os.mkdir('/tmp/django_tmp/')
 
-    update_log = UpdateFilesDB.objects.order_by('-update_time')[:5]
+
+    update_log = UpdateFilesDB.objects.order_by('-update_time')[:7]
     perm_all = Permission.objects.all()
     return render_to_response('display.html', {'form': update,'outcomes':update_log,'perm_all':perm_all},context_instance=RequestContext(request))
 
@@ -550,7 +248,7 @@ def get_server_status(request):
     return render_to_response('general.html', {'results': results})
 
 @login_required(login_url="/login/")
-def index_page(request):  
+def index_page(request):
 #    if username != 'test@skymoons.com':
 #        raise Exception("Please login frist")
     context = {}
@@ -561,7 +259,7 @@ def index_page(request):
 
     firstday_this_month = today_date.replace(day=1)
     lastday_last_month = firstday_this_month - datetime.timedelta(days=1)
-    last_month = lastday_last_month.strftime("%B")    
+    last_month = lastday_last_month.strftime("%B")
 
     firstday_last_month = lastday_last_month.replace(day=1)
     lastday_two_months_ago = firstday_last_month - datetime.timedelta(days=1)
