@@ -208,4 +208,12 @@ class UpdateFilesDB(models.Model):
     update_by = models.CharField(max_length=128, unique=False)
     def __unicode__(self):
         return self.name
-
+class GamesvList(models.Model):
+    ipaddr = models.GenericIPAddressField(unique=False)
+    minionid = models.CharField(max_length=128, unique=False)
+    gameserverid = models.CharField(max_length=128, unique=True)
+    mergersvid = models.CharField(max_length=128, unique=False)
+    isnewest = models.CharField(max_length=64, unique=False)
+    updatetime = models.DateTimeField(default=datetime.now)
+    def __unicode__(self):
+        return self.gameserverid

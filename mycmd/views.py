@@ -5,13 +5,14 @@ from django.shortcuts import HttpResponse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django import forms
-from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList,UpdateFiles,UpdateFilesDB
+from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList,UpdateFiles,UpdateFilesDB,GamesvList
 #from mycmd.models import *
 import os, urllib2, urllib, json, re, time, datetime, shutil
 #import pickle
 #from mycmd.config import *
 from mycmd import salt_read_dir
 import salt.client
+import salt.runner #show results
 import os
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User,Group
@@ -38,6 +39,10 @@ from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
+from django.http import StreamingHttpResponse
+import random
+import time
+
 #import os
 #import os.path
 #import json
@@ -45,6 +50,7 @@ from django.http import JsonResponse
 # Create your views here.
 
 file_name_list = []
+@login_required(login_url="/login/")
 def uploadify_script(request):
     if os.path.exists('/tmp/django_tmp/'):
         #os.system('rm -rf /tmp/django_tmp/*')
@@ -83,8 +89,8 @@ def update_files_salt(request):
     ## the all_dir is the json format, if need dict format, we need to translate all ''to ""
 
     if request.method == 'POST':
-        #form = SaltUserFileForm(request.POST,request.FILES)
-        #form = UpdateFiles(request.POST)
+        perm_all = Permission.objects.all()
+
         update = UpdateFilesDB(request.POST)
         create_dir = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
         print os.mkdir('/data/upload/' + create_dir)
@@ -115,11 +121,16 @@ def update_files_salt(request):
 
         '''上传的文件'''
         uploadfiles = config_files + beam_files
-        '''首先对输入的数据进行校验'''
-        is_all_gameserver = request.POST.get('all_gameserver')
-        input_gameserver_id = request.POST.get('input_gameserver')
-        exclu_gameserver_id = request.POST.get('exclu_gameserver')
 
+        '''获取页面输入的所有数据,从上到下依次得到数据'''
+        is_all_gameserver = request.POST.get('all_gameserver')
+        exclu_gameserver_id = request.POST.get('exclu_gameserver')
+        input_gameserver_id = request.POST.get('input_gameserver')
+        '''这个地方得到的数据是所有按钮的状态，如果on那就是点击状态，如果不是on那就不是点击状态,默认为至少一个on状态，如果是空的话返回错误'''
+        operate_type = request.POST.getlist('updatename')
+        operate_aim = request.POST.get('types')
+
+        print '显示所有的输入',uploadfiles,is_all_gameserver,exclu_gameserver_id,input_gameserver_id,operate_type,operate_aim
         '''对输入的内容转化成数组形式'''
         input_servers= str(input_gameserver_id)
         exclu_gameserver = str(exclu_gameserver_id)
@@ -128,9 +139,14 @@ def update_files_salt(request):
         exclu_gameserver_id = exclu_gameserver.split(",")
         print exclu_gameserver_id
 
-        update_type = request.POST.get('types')
+        '''判断更新文件夹中是否有文件'''
+        if uploadfiles:
+            pass
+        else:
+            error_code = '更新文件夹中无文件，请重新上传'
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
 
-        '''是否全选游戏服'''
+        '''判断是否全选游戏服'''
         if is_all_gameserver == "all_gameserver":
             is_all_gameserver_status = "Yes"
             input_gameserver_id = "all gameservers"
@@ -138,99 +154,103 @@ def update_files_salt(request):
             if input_gameserver_id:
                 is_all_gameserver_status = "No"
             else:
-                return render_to_response('error.html')
-        if update_type:
+                #return render_to_response('error.html')
+                error_code = '请选择全服或者输入区服id'
+                return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+
+        '''判断同步或更新有无被选中'''
+        if len(operate_type) == 0:
+            #return render_to_response('error.html')
+            error_code = '同步或者更新操作至少选择一个'
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+        else:
+            pass
+
+        '''判断提交的操作目的有没有选择'''
+        if operate_aim:
             pass
         else:
-            return render_to_response('error.html')
+            #return render_to_response('error.html')
+            error_code = '没有选择此次操作目的'
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
 
-        '''输入的区服和排除的区服'''
-        inclugmsvid = inputgmsvlist
-        exclugmsvid=list()
-        '''执行脚本并记录运行结果测试数据'''
-        '''exclu1=['1054', '200']
-        inclu1=['100','1051', '1052', '1053']
-        if_all_server1="No"
-        uploadfiles1=['data_box', 'data_fire']'''
+        '''判断是同步还是更新操作'''
+        if len(operate_type) == 1:
+            manage_type = 'sync'
+            client = salt.client.LocalClient()
+            client.cmd('*','saltutil.sync_modules')
+            result_jid = client.cmd_async('*','rsyncgmsv.syncgmfile',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #rsyncfiles
 
-        client = salt.client.LocalClient()
-        client.cmd('*','saltutil.sync_modules')
-        rsync_result = client.cmd('*','rsyncgmsv.syncgmfile',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #rsyncfiles
-        #result = client.cmd('*','updategmsv.updategm',[exclu1,inclu1,if_all_server1,uploadfiles1]) '''测试数据'''
-        run_rsync = client.cmd('*','cmd.script',['/usr/local/src/rsync.sh'])
-        result = client.cmd('*','updategmsv.updategm',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #updatefiles
-        print result
-        return_info = list()
-        update_other_fail_list = list()
-        update_127fail_list = list()
-        update_1fail_list = list()
-        update_suc_list = list()
-        update_err_list = list()
-        update_err_svid = list()
-
-        '''将执行更新脚本获得的minion端中的stdout的结果字段转换成为字典并保存进数组中'''
-        for key in result:
-            print key
-            print result[key]
-            #result_json = str(result[key]['stdout']).replace('\'','\"')
-            #result_dict = json.loads(result_json)
-            #for i in result_dict:
-                #return_info.append(i)
-            for i in result[key]:
-                return_info.append(i)
-
-        '''将获得的结果分类放入各个列表'''
-        for i in return_info:
-            if i['outcome'] == 0:
-                update_suc_list.append(i['gameserverid'])
-            elif i['outcome'] == 1:
-                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
-                update_1fail_list.append(each_outcome)
-            elif i['outcome'] == 127:
-                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
-                update_127fail_list.append(each_outcome)
-            else:
-                each_outcome = json.dumps({"id":i['gameserverid'],"file":i['updatefile']})
-                update_other_fail_list.append(each_outcome)
-        update_err_list = update_other_fail_list + update_127fail_list + update_1fail_list
-        print update_err_list
-        for i in update_err_list:
-            err_list = json.loads(i)
-            print err_list['id']
-            update_err_svid.append(err_list['id'].encode("utf-8"))
-        print update_err_svid
-
-        if update_err_svid:
-            update_outcome = "fail"
+        elif len(operate_type) == 2:
+            manage_type = 'update'
+            client = salt.client.LocalClient()
+            client.cmd('*','saltutil.sync_modules')
+            print '-------all parameters------',exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles
+            result_jid = client.cmd_async('*','updategmsv.updategm',[exclu_gameserver_id,inputgmsvlist,is_all_gameserver_status,uploadfiles]) #updatefiles
         else:
-            update_outcome = "success"
+            error_code = '既不是同步操作也不是更新'
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+
+        opts = salt.config.master_config('/etc/salt/master')
+        runner = salt.runner.RunnerClient(opts)
+        #print runner.cmd('jobs.lookup_jid', [str(rsync_jid)])
+        #result = client.cmd('*','updategmsv.updategm',[exclu1,inclu1,if_all_server1,uploadfiles1]) '''测试数据'''
+        #run_rsync = client.cmd_async('*','cmd.script',['/usr/local/src/rsync.sh'])
+        #print runner.cmd('jobs.lookup_jid', [str(run_rsync)])
 
         user_id = request.session.items()[1][1]
         username = User.objects.get( id = user_id )
 
         update = UpdateFilesDB()
         update.is_all_gameservers = is_all_gameserver_status
-        update.input_gameserver_id = set(inputgmsvlist)
-        update.update_type =  update_type
+        update.input_gameserver_id = inputgmsvlist
+        update.exclu_gameserver_id = exclu_gameserver_id
+        update.update_type = manage_type
         update.update_by = username
         update.update_files_dir = '/data/upload/' + create_dir
-        update.update_files = files
-        update.update_outcome = update_outcome
-        update.update_fail_server = set(update_err_svid)
-        update.update_fail_details = result
+        update.update_files = uploadfiles
+        update.update_outcome = 'progressing'
+        update.result_jid = result_jid
+        update.update_fail_server = 'progressing'
+        update.update_fail_details = 'progressing'
         update.save()
 
+        ret = {"result_jid":result_jid}
+        ret_json = json.dumps(ret)
+        return HttpResponse(ret_json)
 
     else:
         update = UpdateFilesDB()
-        #os.system('rm -rf /tmp/django_tmp/*') #caution!!
         shutil.rmtree('/tmp/django_tmp/')
         os.mkdir('/tmp/django_tmp/')
+        result_jid = None
+        #return render_to_response('display.html', {'perm_all':perm_all,'username':username,'result_jid':result_jid},context_instance=RequestContext(request))
 
 
-    update_log = UpdateFilesDB.objects.order_by('-update_time')[:7]
-    perm_all = Permission.objects.all()
-    return render_to_response('display.html', {'form': update,'outcomes':update_log,'perm_all':perm_all},context_instance=RequestContext(request))
+        #update_log = UpdateFilesDB.objects.order_by('-update_time')[:10]
+        perm_all = Permission.objects.all()
+        user_id = request.session.items()[1][1]
+        print user_id
+        username = User.objects.get( id = user_id )
+
+        #return render_to_response('display.html', {'form': update,'outcomes':update_log,'perm_all':perm_all},context_instance=RequestContext(request))
+        return render_to_response('display.html', {'perm_all':perm_all,'username':username,'result_jid':result_jid},context_instance=RequestContext(request))
+        ## dump data to the html
+        '''ret = {"result_jid":result_jid}
+        ret_json = json.dumps(ret)'''
+        '''return {'finishedgmsv':finishedgmsv,'allgmsv':allgmsv}'''
+        #return HttpResponse(ret_json)
+    '''else:
+        update = UpdateFilesDB()
+        shutil.rmtree('/tmp/django_tmp/')
+        os.mkdir('/tmp/django_tmp/')
+        result_jid = None
+        perm_all = Permission.objects.all()
+        return render_to_response('display.html', {'perm_all':perm_all,'username':username,'result_jid':result_jid},context_instance=RequestContext(request))'''
+
+
+
+
 
 #@permission_required('mycmd.delete_userdellist')
 @login_required(login_url="/login/")
@@ -242,7 +262,8 @@ def get_server_status(request):
     print user_id
     username = User.objects.get( id = user_id )
     print '--------get username-------',username
-    results = CloudServerStatus.objects.filter( engineer_name = username)
+    #results = CloudServerStatus.objects.filter( engineer_name = username)
+    results = GamesvList.objects.all()
     print '--------get results-------',results
     print results
     return render_to_response('general.html', {'results': results})
@@ -317,13 +338,13 @@ def index_page(request):
     other_gameserver = GameServer.objects.all().count() - pkq_gameserver - wlwz_gameserver - sanguo_gameserver
 
     ## get zabbix alert data by zabbix's api
-    zabbix_alert = 1
+    zabbix_alert = random.randint(0, 15)
 
     ## budget and payment in purchasing cloud servers
     turnover = 760
 
     ## it depends if all the users need this
-    online_players = 2000000
+    online_players = random.randint(20, 1500)
 
     user_id = request.session.items()[1][1]
     print user_id
@@ -446,7 +467,7 @@ def user_add(request):
         user.save()
         ## the second step is to add users to ldap
         #read ldap config file
-        conf = ConfigParser.SafeConfigParser()
+        '''conf = ConfigParser.SafeConfigParser()
         conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
         ldap_server = conf.get("ldap","server")
         ldap_admin_user = conf.get("ldap", "admin_user")
@@ -479,7 +500,7 @@ def user_add(request):
         ##print(conn.result)
         conn.unbind()
         print 'add user successfully'
-        #return HttpResponseRedirect('/useradd/')
+        #return HttpResponseRedirect('/useradd/')'''
         return render_to_response('user_add.html',context_instance=RequestContext(request))
         #except:
         #    return HttpResponseRedirect('plz check your username and password')
@@ -518,38 +539,38 @@ def user_edit(request):
     header_title, path1, path2 = '编辑用户', '用户管理', '编辑用户'
     if request.method == 'GET':
         user_id = request.GET.get('id')
-        print '-----------------', user_id
+        #print '-----------------', user_id
         if not user_id:
             #return HttpResponseRedirect(reverse('index'))
             return HttpResponseRedirect('/userlist/')
 
         user_role = {'SU': u'超级管理员', 'CU': u'普通用户'}
         user = User.objects.get( id=user_id)
-        print user
+        #print user
         #username = User.objects.get( id = user_id )
         group_all = Group.objects.all()
-        print group_all
+        #print group_all
         if user:
             #groups_str = ' '.join([str(group.id) for group in user.group.all()])
             #admin_groups_str = ' '.join([str(admin_group.group.id) for admin_group in user.admingroup_set.all()])
             return render_to_response('user_edit.html',{'user':user,'group_all':group_all})
 
     else:
-        print '-------reurl to post------'
+        #print '-------reurl to post------'
         user_id = request.GET.get('id')
-        print '-----user id-------',user_id
+        #print '-----user id-------',user_id
         password = request.POST.get('password')
         name = request.POST.get('name')
         email = request.POST.get('email')
         groups = request.POST.getlist('groups')
-        print '--------selected group------',groups[0]
+        #print '--------selected group------',groups[0]
         group_id = int(groups[0])
         group_name = Group.objects.all()
         #print '--------groups-------',group_name[group_id]
 
         role_post = request.POST.get('role', 'CU')
         admin_groups = request.POST.getlist('admin_groups', [])
-        print '----------all groups----',admin_groups
+        #print '----------all groups----',admin_groups
         extra = request.POST.getlist('extra', [])
         is_active = True if '0' in extra else False
         email_need = True if '1' in extra else False
@@ -558,7 +579,7 @@ def user_edit(request):
         if user_id:
             user = User.objects.get(id=user_id)
             
-            print '------username---',user
+            #print '------username---',user
         else:
             return HttpResponseRedirect(reverse('/user_list/'))
 
@@ -570,7 +591,7 @@ def user_edit(request):
         ##               admin_groups=admin_groups,
         ###               role=role_post,
         ##               is_active=is_active)
-        print user.has_perm('change_group')
+        #print user.has_perm('change_group')
 
         ## test if a user have some perm, if have, return true, if not, return false
         #user1 = User.objects.get(id=49)
@@ -580,10 +601,10 @@ def user_edit(request):
         ##modify users information without creating a new one
         user.last_name = name
         user.password = make_password(password,None,'pbkdf2_sha256')
-        print '-----------encrypted password-------',user.password
+        #print '-----------encrypted password-------',user.password
         user.email = email
         username = request.POST.get('username')
-        print '---------username------',username
+        #print '---------username------',username
         email = request.POST.get('email')
         user.last_name = username
         user.save()
@@ -591,7 +612,7 @@ def user_edit(request):
         if email_need:
             msg = u"""
             Hi %s:
-                您的信息已修改，请登录跳板机查看详细信息
+                您的信息已修改，请登录运维系统查看详细信息
                 地址：%s
                 用户名： %s
                 密码：%s (如果密码为None代表密码为原密码)
@@ -637,7 +658,7 @@ def user_del(request):
     user_del_username = User.objects.get( id = user_del_id )
     print 'user_del_username',user_del_username
 
-    conf = ConfigParser.SafeConfigParser()
+    '''conf = ConfigParser.SafeConfigParser()
     conf.read('/usr/local/src/cmdb/saltcmd/mycmd/ldap.conf')
     ldap_server = conf.get("ldap","server")
     ldap_admin_user = conf.get("ldap", "admin_user")
@@ -655,7 +676,7 @@ def user_del(request):
     conn.bind()
     conn.delete(user_dn)
     #conn.delete(user_dn)  ##comparing with add operation, delete just need dn to delete a user
-    conn.unbind()
+    conn.unbind()'''
 
     del_object = UserDelList.objects.create(deleted_user_id_id=user_del_id,deleted_by=username,delete_result='success')
     del_object.del_user_task()
@@ -726,9 +747,145 @@ def perms_add(request):
 
         #return render_to_response('perms_manage.html',{'group_all':group_all,'perm_all':perm_all},context_instance=RequestContext(request))
         return render_to_response('perms_manage.html',{'group_all':user_all,'perm_all':perm_all},context_instance=RequestContext(request))
-    
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")    
 def perms_delete(request):
     codename = request.POST['codename']
     Permission.objects.get(codename=codename).delete()
     relist = {'re':"该权限删除成功!"}
     return render_to_response('perms_manage.html',request)
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")
+def update_list(request):
+    jids = []
+    to_be_updated_data = UpdateFilesDB.objects.filter(update_outcome='progressing')
+    #jids = [row[0] for row in to_be_updated_data]
+    for jid in to_be_updated_data:
+        jids.append(jid)
+        print type(jid)
+    print jids
+    for each_jid in jids:
+        succeeded_gmsv = []
+        succeeded_gmsv_detail = []
+        failed_gmsv = []
+        failed_gmsv_detail = []
+        failed_gmsv_id = []
+        succeeded_gmsv_id = []
+
+        opts = salt.config.master_config('/etc/salt/master')
+        runner = salt.runner.RunnerClient(opts)
+        outcome = runner.cmd('jobs.lookup_jid', [str(each_jid)])
+
+        '''所有服务器数量count'''
+        ret=[]
+        client = salt.client.LocalClient()
+        minions = client.cmd('*', 'test.ping')
+        #print ret['up'],type(ret['up'])
+        print minions,type(minions),len(minions)
+
+        '''如果存活的服务器和监测到的jid返回结果一致，也就是说salt异步执行已经完全执行完毕，就可以进行更新了，如果没有更新完毕，则返回之前的结果'''
+        if len(outcome) == len(minions):
+            print '-----------outcome------',outcome
+            for key in outcome:
+                print '-----key----',key
+                count = len(outcome[key])
+                for i in range(count):
+                    print '--------------',outcome[key][i]['runstatus'],type(outcome[key][i]['runstatus'])
+                    if outcome[key][i]['runstatus'] == 0:
+                        succeeded_gmsv_id.append(outcome[key][i]['gameserver'])
+                        succeeded_gmsv_item = {'gmsvid':outcome[key][i]['gameserver'],'status':outcome[key][i]['runstatus'],'details':outcome[key][i]['details']}
+                        print '------------sunccess item---------',succeeded_gmsv_item
+                        succeeded_gmsv_detail.append(succeeded_gmsv_item)
+                    else:
+                        failed_gmsv_id.append(outcome[key][i]['gameserver'])
+                        failed_gmsv_item = {'gmsvid':outcome[key][i]['gameserver'],'status':outcome[key][i]['runstatus'],'details':outcome[key][i]['details']}
+                        print '------------sunccess item---------',failed_gmsv_item
+                        failed_gmsv_detail.append(failed_gmsv_item)
+    
+                '''判断操作是否成功'''
+            if failed_gmsv_id:
+                update_status = 'Fail'
+            else:
+                update_status = 'Success'
+            '''每个jid更新后的结果存入数据库'''
+            item = UpdateFilesDB.objects.get(result_jid=each_jid)
+            item.update_outcome = update_status
+            item.update_fail_server = failed_gmsv_id
+            item.update_fail_details = failed_gmsv_detail + succeeded_gmsv_id
+            item.save()
+        else:
+            pass
+
+    update_log = UpdateFilesDB.objects.order_by('-update_time')[:10]
+    perm_all = Permission.objects.all()
+    return render_to_response('list.html', {'outcomes':update_log,'perm_all':perm_all},context_instance=RequestContext(request))
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")
+def update_progress(request):
+    if request.method == 'POST':
+        update_jid=request.POST.get('result_jid')
+        opts = salt.config.master_config('/etc/salt/master')
+        runner = salt.runner.RunnerClient(opts)
+        outcome = runner.cmd('jobs.lookup_jid', [str(update_jid)])
+        finishedgmsv = 0
+        for key in outcome:
+            finishedgmsv = finishedgmsv + len(outcome[key])
+        #print '--------------finishedgmsv------',finishedgmsv
+        allgmsv = GamesvList.objects.all().count()
+        print '--------------allgmsv------',allgmsv
+    else:
+        update_jid = request.GET.get('result_jid')
+        print update_jid
+        opts = salt.config.master_config('/etc/salt/master')
+        runner = salt.runner.RunnerClient(opts)
+        outcome = runner.cmd('jobs.lookup_jid', [str(update_jid)])
+        finishedgmsv = 0
+        for key in outcome:
+            finishedgmsv = finishedgmsv + len(outcome[key])
+        #print '--------------finishedgmsv------',finishedgmsv
+        allgmsv = GamesvList.objects.all().count()
+        print '--------------allgmsv------',allgmsv
+
+    #time.sleep(5)
+    perm_all = Permission.objects.all()
+    ret = {"finishedgmsv":finishedgmsv,"allgmsv":allgmsv,"result_jid":update_jid}
+    print ret
+    ## dump data to html, this data need to be json format
+    ret_json = json.dumps(ret)
+    '''return {'finishedgmsv':finishedgmsv,'allgmsv':allgmsv}'''
+    return HttpResponse(ret_json)
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")
+def big_file_download(request):
+    run_jid=request['update_jid']
+    opts = salt.config.master_config('/etc/salt/master')
+    runner = salt.runner.RunnerClient(opts)
+    logfilename = '/var/log/' + run_jid + '.log'
+    outcome = runner.cmd('jobs.lookup_jid', [str(update_jid)])
+    f = open(logfilename,'w')
+    f.write(outcome)
+    f.close
+    content = open("simplefile", "rb").read()
+    return HttpResponse(content)
+
+@permission_required('mycmd.delete_userdellist')
+@login_required(login_url="/login/")
+def file_download(request):
+    if request.method == 'POST':
+        run_jid=request['update_jid']
+        opts = salt.config.master_config('/etc/salt/master')
+        runner = salt.runner.RunnerClient(opts)
+        logfilename = '/var/log/' + run_jid + '.log'
+        if request.POST.has_key('s_thread'):
+            #filename = '/root/dist.tar.gz'
+            wrapper = FileWrapper(file(logfilename))
+            response = HttpResponse(wrapper, content_type='text/plain')
+            response['Content-Length'] = os.path.getsize(logfilename)
+            response['Content-Encoding'] = 'utf-8'
+            response['Content-Disposition'] = 'attachment;filename=%s' % filename
+            return response
+    return render(request,'list.html',locals())

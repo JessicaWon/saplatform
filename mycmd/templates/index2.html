@@ -125,43 +125,43 @@
         <li class="header">MAIN NAVIGATION</li>
         <li class="active treeview">
           <a href="http://10.10.11.69/index/">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+            <i class="fa fa-dashboard"></i> <span>概览</span>
           </a>
         </li>
 
         <li>
           <li class="treeview">
           <a href="http://10.10.11.69/general/">
-            <i class="fa fa-th"></i> <span>Servers status</span>
+            <i class="fa fa-th"></i> <span>服务状态</span>
           </a>
         </li>
 
         <li class="treeview">
           <a href="http://10.10.11.69/dir/">
-            <i class="fa fa-edit"></i> <span>Display files</span>
+            <i class="fa fa-edit"></i> <span>文件更新</span>
           </a>
         </li>
 
        <li class="treeview">
            <a href="http://10.10.11.69/privileges/">                    
-               <i class="fa fa-gears"></i> <span>Privileges management</span>                    
+               <i class="fa fa-gears"></i> <span>权限管理</span>                    
                <i class="fa fa-angle-left pull-right"></i>               
            </a>
            <ul class="treeview-menu">
                <li class="treeview">
-                   <a href="/admin">admin</a>
+                   <a href="/admin">管理</a>
                    <ul class="treeview-menu">
                        <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
                        <li class="treeview">
                            <a href="/admin/role">                                    
-                               <i class="fa fa-circle-o"></i>priviliges<i class="fa fa-angle-left pull-right"></i>                                
+                               <i class="fa fa-circle-o"></i>权限<i class="fa fa-angle-left pull-right"></i>                                
                            </a>
                            <ul class="treeview-menu">
-                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> router</a></li>
-                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>permission</a></li>
+                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> 路由</a></li>
+                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>权限</a></li>
                                <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
-                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>assignment</a></li>
-                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>menu</a></li>
+                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>指派</a></li>
+                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>菜单</a></li>
                            </ul>
                        </li>
                    </ul>
@@ -180,7 +180,7 @@
     <section class="content-header">
     {% block content-header %}
       <h1>
-        Project Overview
+        线上概览
         <small>Version 1.0</small>
       </h1>
       <ol class="breadcrumb">
@@ -200,7 +200,7 @@
             <span class="info-box-icon bg-aqua"><i class="ion ion-gear-b"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Game Server</span>
+              <span class="info-box-text">游戏服</span>
               <span class="info-box-number">{{game_server}}<small></small></span>
             </div>
             <!-- /.info-box-content -->
@@ -213,7 +213,7 @@
             <span class="info-box-icon bg-darken-4"><i class="ion ion-ios-cloudy"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Cloud Server</span>
+              <span class="info-box-text">云服务器</span>
               <span class="info-box-number">{{cloud_server}}<small></small></span>
             </div>
             <!-- /.info-box-content -->
@@ -226,7 +226,7 @@
             <span class="info-box-icon bg-red"><i class="fa ion-alert"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Alert</span>
+              <span class="info-box-text">告警</span>
               <span class="info-box-number">{{zabbix_alert}}</span>
             </div>
             <!-- /.info-box-content -->
@@ -243,7 +243,7 @@
             <span class="info-box-icon bg-teal"><i class="ion ion-ios-cart-outline"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Turnover</span>
+              <span class="info-box-text">支出管理</span>
               <span class="info-box-number">{{turnover}}</span>
             </div>
             <!-- /.info-box-content -->
@@ -256,7 +256,7 @@
             <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Online Players</span>
+              <span class="info-box-text">在线玩家</span>
               <span class="info-box-number">{{online_players}}</span>
             </div>
             <!-- /.info-box-content -->
@@ -271,7 +271,7 @@
         <div class="col-md-12">
           <div class="box">
             <div class="box-header with-border">
-              <h3 class="box-title">Monthly New Game Server Report</h3>
+              <h3 class="box-title">月季度游戏报告</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -295,7 +295,7 @@
               <div class="row">
                 <div class="col-md-8">
                   <p class="text-center">
-                    <strong>Game servers: 1 Jul, 2016 - 30 Dec, 2016</strong>
+                    <strong>游戏服: 近六个月的游戏服开服数量趋势</strong>
                   </p>
 
                   <div class="chart">
@@ -307,11 +307,11 @@
                 <!-- /.col -->
                 <div class="col-md-4">
                   <p class="text-center">
-                    <strong>All Completed Game Servers</strong>
+                    <strong>所有线上游戏</strong>
                   </p>
 
                   <div class="progress-group">
-                    <span class="progress-text">PKQ</span>
+                    <span class="progress-text">皮卡丘</span>
                     <span class="progress-number"><b>{{pkq_data}}</b>/200</span>
 
                     <div class="progress sm">
@@ -320,7 +320,7 @@
                   </div>
                   <!-- /.progress-group -->
                   <div class="progress-group">
-                    <span class="progress-text">Three Kingdoms</span>
+                    <span class="progress-text">三国</span>
                     <span class="progress-number"><b>{{sanguo_gameserver}}</b>/400</span>
 
                     <div class="progress sm">
@@ -329,7 +329,7 @@
                   </div>
                   <!-- /.progress-group -->
                   <div class="progress-group">
-                    <span class="progress-text">Legend of Martial</span>
+                    <span class="progress-text">赛尔号</span>
                     <span class="progress-number"><b>{{wlwz_gameserver}}</b>/800</span>
 
                     <div class="progress sm">
@@ -338,7 +338,7 @@
                   </div>
                   <!-- /.progress-group -->
                   <div class="progress-group">
-                    <span class="progress-text">Others</span>
+                    <span class="progress-text">其他游戏</span>
                     <span class="progress-number"><b>{{other_gameserver}}</b>/500</span>
 
                     <div class="progress sm">
@@ -361,7 +361,7 @@
                   <div class="description-block border-right">
                     <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
                     <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL COST</span>
+                    <span class="description-text">总共支出</span>
                   </div>
                   <!-- /.description-block -->
                 </div>
@@ -372,7 +372,7 @@
                   <div class="description-block">
                     <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
                     <h5 class="description-header">1200</h5>
-                    <span class="description-text">GOAL GAME SERVER COMPLETIONS</span>
+                    <span class="description-text">游戏服开服目标</span>
                   </div>
                   <!-- /.description-block -->
                 </div>
