@@ -106,10 +106,10 @@ WSGI_APPLICATION = 'saltcmd.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'saltcmd',
-        'USER': 'saltcmd',
-        'PASSWORD': 'o9deWdj@lfxlsemxjd_wigh',
+        'ENGINE': 'dddd',
+        'NAME': 'dddd',
+        'USER': 'dddd',
+        'PASSWORD': 'ddddd',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
