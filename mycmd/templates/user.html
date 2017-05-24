@@ -1,461 +1,468 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Skymoons | SAplatform</title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
-  <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-  <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css">
-  <link href="/static/image/uploadify/uploadify.css" type="text/css" rel="stylesheet" />
-  <script type="text/javascript" src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script> 
-  <script type="text/javascript" src="/static/image/uploadify/jquery.uploadify-3.1.min.js"></script>
-  
-  <script src="/static/js/jquery.ztree.all-3.5.min.js"></script>
-</head>
-
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户列表</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css"></head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-
-  <header class="main-header">
-  
-    <a href="/index/" class="logo">
-      <span class="logo-mini"><b>A</b>LT</span>
-      <span class="logo-lg"><b>Skymoons</b>SA</span>
-    </a>
-
-    <nav class="navbar navbar-static-top" role="navigation">
-      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-    </nav> 
-  </header>
-
-  <aside class="main-sidebar">
-    <section class="sidebar">
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="/static/dist/img/user2-160x160.jpg" class="img-thumbnail" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Skymoons</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
-      <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu">
-        {% block sidebar %}
-
-        <li class="header">MAIN NAVIGATION</li>
-
-        <li class="treeview">
-          <a href="http://10.10.11.69/index/">
-            <i class="fa fa-dashboard"></i> <span>概览</span>
-          </a>
-        </li>
-
-        <li>
-          <li class="treeview">
-          <a href="http://10.10.11.69/general/">
-            <i class="fa fa-th"></i> <span>服务状态</span>
-          </a>
-        </li>
-
-        <li class="treeview">
-          <a href="http://10.10.11.69/dir/">
-            <i class="fa fa-edit"></i> <span>文件更新</span>
-          </a>
-        </li>
-
-       <li class="active treeview">
-           <a href="http://10.10.11.69/userlist/">                    
-               <i class="fa fa-gears"></i> <span>权限管理</span>                    
-               <i class="fa fa-angle-left pull-right"></i>               
-           </a>
-           <ul class="active treeview">
-               <li class="active treeview">
-                   <a href="/admin">管理员</a>
-                   <i class="fa fa-angle-left pull-right"></i>
-                   <ul class="treeview-menu">
-                       <li><a href="/userlist/"><i class="fa fa-circle-o"></i>普通用户</a></li>
-                       <li class="treeview-menu">
-                           <a href="/admin/role">                                    
-                               <i class="fa fa-circle-o"></i>权限<i class="fa fa-angle-left pull-right"></i>                                
-                           </a>
-                           <ul class="treeview-menu">
-                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> 路由</a></li>
-                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>权限</a></li>
-                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
-                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>指派</a></li>
-                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>菜单</a></li>
-                           </ul>
-                       </li>
-                   </ul>
-               </li>
-           </ul>
-       </li>
-        {% endblock %}
-      </ul>
-
-  </aside>
-
-
-  <div class="content-wrapper">
-      </section>
-	    <section class="content-header">
-      <h1>
-        权限管理
-        <small>version1.0</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="/userlist/"><i class="fa fa-gears"></i> Home</a></li>
-        <li class="active">用户管理</li>
-      </ol>
-    </section>
-    <section class="content">
-      <div class="btn-group">
-            {% url view.user_add as theaddpermissionurl %}
-            <a class="btn btn-default {% if request.path == theaddpermissonurl %}
-            active
-            {% endif %}"
-               href="/permadd" ><span class="active glyphicon glyphicon-edit"></span>权限管理</a>
-            {% url view.privileges_list as thelistpermissiononurl %}
-            <a class="btn btn-default {% if request.path == thelistpermissionurl %}
-            active
-            {% endif %}"
-               href="/userlist/" ><span class="glyphicon glyphicon-list"></span>权限列表</a>
-      </div></br></br>
-<!--
-    </section>
-    <section class="content">
--->
-        <div class="box-body table-responsive no-padding">
-
-<!--    <div class="wrapper wrapper-content animated fadeInRight">
--->
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>填写基本信息</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
+    <div class="wrapper">
+        <!-- 头部 -->
+        <header class="main-header">
+            <!--   左 -->
+            <a href="index2.html" class="logo">
+                <span class="logo-mini"> <b>Skymoons</b>
+                    SA
+                </span>
+                <span class="logo-lg"> <b>Skymoons</b>
+                    SA
+                </span>
+            </a>
+            <!--   /左 -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!--   右侧 -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="/static/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <span class="hidden-xs">{{ username }}</span>
                             </a>
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="fa fa-wrench"></i>
-                            </a>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <form method="post" id="userForm" class="form-horizontal" action="">
-                            {% if error %}
-                                <div class="alert alert-warning text-center">{{ error }}</div>
-                            {% endif %}
-                            {% if msg %}
-                                <div class="alert alert-success">{{ msg | safe }}</div>
-                            {% endif %}
-                            <div class="form-group">
-                                <label for="username" class="col-sm-2 control-label">用户名<span class="red-fonts">*</span></label>
-                                <div class="col-sm-8">
-                                    <input id="username" name="username" placeholder="Username" type="text" class="form-control" {% if error %}value="{{ username }}" {% endif %}>
-                                </div>
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <label for="name" class="col-sm-2 control-label">姓名<span class="red-fonts">*</span></label>
-                                <div class="col-sm-8">
-                                    <input id="name" name="name" placeholder="Name" type="text" class="form-control" {% if error %}value="{{ name }}" {% endif %} >
-                                </div>
-                            </div>
-
-                            {% ifequal session_role_id 2 %}
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <label for="role" class="col-sm-2 control-label">权限<span class="red-fonts">*</span></label>
-                                <div class="col-sm-8">
-                                    {% for r, role_name in user_role.items %}
-                                    <div class="col-sm-3">
-                                        <div class="radio i-checks">
-                                            <label><input type="radio" value="{{ r }}" class="role" name="role" {% ifequal r 'CU' %}checked{% endifequal %}>{{ role_name }}</label>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src="/static/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <p>
+                                        {{username}} - VideoGame
+                                        <small>Member since Nov. 2012</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Followers</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Sales</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Friends</a>
                                         </div>
                                     </div>
-                                    {% endfor %}
+                                    <!-- /.row --> </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">主页</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="/logout/" class="btn btn-default btn-flat">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                        <li>
+                            <a href="#" data-toggle="control-sidebar"> <i class="fa fa-gears"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--   /右侧 -->
+            </nav>
+        </header>
+        <!-- /头部 -->
+        <!-- 菜单 -->
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <ul class="sidebar-menu">
+                    {% block sidebar %}
+                    <li class=" treeview">
+                        <a href="http://123.59.150.94:8080/index/"> <i class="fa fa-dashboard"></i>
+                            <span>概览</span>
+                        </a>
+                    </li>
+                    <li class="treeview ">
+                        <a href="http://123.59.150.94:8080/general/">
+                            <i class="fa fa-th"></i>
+                            <span>服务状态</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="http://123.59.150.94:8080/dir/">
+                            <i class="fa fa-edit"></i>
+                            <span>文件更新</span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="active">
+                                <a href="http://123.59.150.94:8080/dir/">
+                                    <i class="fa fa-circle-o"></i>
+                                    文件上传
+                                </a>
+                            </li>
+                            <li>
+                                <a href="http://123.59.150.94:8080/list/">
+                                    <i class="fa fa-circle-o"></i>
+                                    更新记录表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview active">
+                        <a href="http://123.59.150.94:8080/privileges/">
+                            <i class="fa fa-gears"></i>
+                            <span>权限管理</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="active">
+                                <a href="/user">
+                                    <i class="fa fa-circle-o"></i>
+                                    添加用户
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endblock %}
+                </ul>
+            </section>
+        </aside>
+        <!-- /.菜单 -->
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>
+                    权限管理
+                    <small>version1.0</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/userlist/">
+                            <i class="fa fa-gears"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="active">user</li>
+                </ol>
+            </section>
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group">
+                            {% url view.user_add as theaddpermissionurl %}
+                            <a class="btn btn-default {% if request.path == theaddpermissonurl %}
+            active
+            {% endif %}"
+               href="/permadd" >
+                                <span class="active glyphicon glyphicon-edit"></span>
+                                权限管理
+                            </a>
+                            {% url view.privileges_list as thelistpermissiononurl %}
+                            <a class="btn btn-default {% if request.path == thelistpermissionurl %}
+            active
+            {% endif %}"
+               href="/userlist/" >
+                                <span class="glyphicon glyphicon-list"></span>
+                                权限列表
+                            </a>
+                        </div>
+                        <div class="box-body">
+                            <div class="ibox-title">
+                                <h5>填写基本信息</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
                                 </div>
                             </div>
-                            {% endifequal %}
-
-
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <label for="groups" class="col-sm-2 control-label">用户组</label>
-                                <div class="col-sm-8">
-                                    <select id="groups" name="groups" class="form-control m-b" multiple size="12">
-                                        {% for group in group_all %}
+                            <div class="ibox-content">
+                                <form method="post" id="userForm" class="form-horizontal" action="">
+                                    {% if error %}
+                                    <div class="alert alert-warning text-center">{{ error }}</div>
+                                    {% endif %}
+                                {% if msg %}
+                                    <div class="alert alert-success">{{ msg | safe }}</div>
+                                    {% endif %}
+                                    <div class="form-group">
+                                        <label for="username" class="col-sm-2 control-label">
+                                            用户名
+                                            <span class="red-fonts">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input id="username" name="username" placeholder="Username" type="text" class="form-control" {% if error %}value="{{ username }}" {% endif %}></div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label for="name" class="col-sm-2 control-label">
+                                            姓名
+                                            <span class="red-fonts">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input id="name" name="name" placeholder="Name" type="text" class="form-control" {% if error %}value="{{ name }}" {% endif %} ></div>
+                                    </div>
+                                    {% ifequal session_role_id 2 %}
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label for="role" class="col-sm-2 control-label">
+                                            权限
+                                            <span class="red-fonts">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            {% for r, role_name in user_role.items %}
+                                            <div class="col-sm-3">
+                                                <div class="radio i-checks">
+                                                    <label>
+                                                        <input type="radio" value="{{ r }}" class="role" name="role" {% ifequal r 'CU' %}checked{% endifequal %}>{{ role_name }}</label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endifequal %}
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label for="groups" class="col-sm-2 control-label">用户组</label>
+                                        <div class="col-sm-8">
+                                            <select id="groups" name="groups" class="form-control m-b" multiple size="12">
+                                                {% for group in group_all %}
                                             {% if forloop.first %}
                                                 <option value="{{ group.id }}" selected>{{ group.name }}</option>
-                                            {% else %}
+                                                {% else %}
                                                 <option value="{{ group.id }}">{{ group.name }}</option>
-                                            {% endif %}
+                                                {% endif %}
                                         {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <label for="email" class="col-sm-2 control-label">Email<span class="red-fonts">*</span></label>
-                                <div class="col-sm-8">
-                                    <input id="email" name="email" type="email" placeholder="username@skymoons.com" class="form-control" {% if error %}value="{{ email }}" {% endif %}>
-                                </div>
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group"><label class="col-sm-2 control-label">其它</label>
-                                <div class="col-sm-2">
-                                    <div class="checkbox i-checks">
-                                        <label><input type="checkbox" value="0" name="extra" >禁用 </label>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="checkbox i-checks">
-                                        <label><input type="checkbox" value="1" name="extra" checked>发送邮件 </label>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">
+                                            Email
+                                            <span class="red-fonts">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input id="email" name="email" type="email" placeholder="username@skymoons.com" class="form-control" {% if error %}value="{{ email }}" {% endif %}></div>
                                     </div>
-                                </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">其它</label>
+                                        <div class="col-sm-2">
+                                            <div class="checkbox i-checks">
+                                                <label>
+                                                    <input type="checkbox" value="0" name="extra" >禁用</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="checkbox i-checks">
+                                                <label>
+                                                    <input type="checkbox" value="1" name="extra" checked>发送邮件</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-2">
+                                            <button class="btn btn-white" type="reset">取消</button>
+                                            <button id="submit_button" class="btn btn-primary" type="submit">确认保存</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    <button class="btn btn-white" type="reset">取消</button>
-                                    <button id="submit_button" class="btn btn-primary" type="submit">确认保存</button>
-                                </div>
-                            </div>
-                        </form></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-      </section>
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b>
+                1.0.0
+            </div> <strong>Copyright &copy; 2016-2017
+                <a href="http://www.skymoons.com">Skymoons</a>
+                .</strong>
+            All rights reserved.
+        </footer>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Create the tabs -->
+            <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                <li>
+                    <a href="#control-sidebar-home-tab" data-toggle="tab">
+                        <i class="fa fa-home"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#control-sidebar-settings-tab" data-toggle="tab">
+                        <i class="fa fa-gears"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- Home tab content -->
+                <div class="tab-pane" id="control-sidebar-home-tab">
+                    <h3 class="control-sidebar-heading">Recent Activity</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                    <p>Will be 23 on April 24th</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-user bg-yellow"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                    <p>New phone +1(800)555-1234</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+                                    <p>nora@example.com</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-file-code-o bg-green"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+                                    <p>Execution time 5 seconds</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.control-sidebar-menu -->
+                    <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Custom Template Design
+                                    <span class="label label-danger pull-right">70%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Update Resume
+                                    <span class="label label-success pull-right">95%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Laravel Integration
+                                    <span class="label label-warning pull-right">50%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Back End Framework
+                                    <span class="label label-primary pull-right">68%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.control-sidebar-menu --> </div>
+                <!-- /.tab-pane -->
+                <!-- Settings tab content -->
+                <div class="tab-pane" id="control-sidebar-settings-tab">
+                    <form method="post">
+                        <h3 class="control-sidebar-heading">General Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Report panel usage
+                                <input type="checkbox" class="pull-right" checked></label>
+                            <p>Some information about this general settings option</p>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Allow mail redirect
+                                <input type="checkbox" class="pull-right" checked></label>
+                            <p>Other sets of options are available</p>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Expose author name in posts
+                                <input type="checkbox" class="pull-right" checked></label>
+                            <p>Allow the user to show his name in blog posts</p>
+                        </div>
+                        <!-- /.form-group -->
+                        <h3 class="control-sidebar-heading">Chat Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Show me as online
+                                <input type="checkbox" class="pull-right" checked></label>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Turn off notifications
+                                <input type="checkbox" class="pull-right"></label>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Delete chat history
+                                <a href="javascript::;" class="text-red pull-right">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            </label>
+                        </div>
+                        <!-- /.form-group --> </form>
+                </div>
+                <!-- /.tab-pane --> </div>
+        </aside>
+        <!-- /.control-sidebar -->
+        <!-- Add the sidebar's background. This div must be placed
+                  immediately after the control sidebar -->
+        <div class="control-sidebar-bg"></div>
     </div>
-
-<script>
-    //----------------------------------------------------------
-    var zTree;
-    var demoIframe;
-
-    function addHoverDom(treeId, treeNode) {
-        var sObj = $("#" + treeNode.tId + "_span");
-        if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
-        var addStr = "<span class='button remove' id='removeBtn_" + treeNode.tId
-                + "' title='add node' onfocus='this.blur();'></span>";
-
-        addStr += "<span class='button add' id='addBtn_" + treeNode.tId + "'></span>";
-        addStr += "<span class='button edit' id='editBtn_" + treeNode.tId + "'></span>";
-        sObj.after(addStr);
-        var btn = $("#addBtn_"+treeNode.tId);
-        if (btn) btn.bind("click", function(){
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-            zTree.addNodes(treeNode, {id:(1000 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
-            return false;
-        });
-    };
-
-    function removeHoverDom(treeId, treeNode) {
-        $("#addBtn_"+treeNode.tId).unbind().remove();
-        $("#removeBtn_"+treeNode.tId).unbind().remove();
-        $("#editBtn_"+treeNode.tId).unbind().remove();
-    };
-
-    var setting = {
-        //async useless
-        //async: {
-        //    enable: true,
-        //},
-        check: {
-            enable: true,
-            chkboxType: { "Y": "ps", "N": "ps" }
-        },
-        view: {
-            addHoverDom: addHoverDom,
-            removeHoverDom: removeHoverDom,
-            dblClickExpand: true,
-            showLine: true,
-            selectedMulti: true
-        },
-        data: {
-            simpleData: {
-                enable:true,
-                idKey: "id",
-                pIdKey: "pId",
-                rootPId: ""
-            }
-        },
-        callback: {
-            beforeClick: function(treeId, treeNode) {
-              console.log(222222)
-            },
-            onClick: function(treeId, treeNode) {
-                alert(treeNode.tId + ", " + treeNode.name);
-                console.log(333333333)
-            },
-            onCheck: function(treeId, treeNode) {
-                alert(treeNode.tId + ", " + treeNode.name);
-                console.log(66666666);
-                var treeObj = $.fn.zTree.getZTreeObj("tree");
-                //var checkedNodes = treeObj.getSelectedNodes();
-                var checkedNodes = treeObj.getCheckedNodes(true);
-                var nodes = treeObj.getNodes();
-                for (var i =0, l=checkedNodes.length; i<l;i++){
-                    console.log(checkedNodes[i]);
-                }
-                var data={};
-                data["jsonTree"] = JSON.stringify(nodes,['name','checked','children']);
-                console.log(data["jsonTree"]);
-                console.log(000000);
-                console.log(9999999999);
-                console.log(1 +  "2" + "2");
-                console.log(1 +  +"2" + "2");
-                console.log(1 +  -"1" + "2");
-                console.log(+"1" +  "1" + "2");
-                console.log( "A" - "B" + "2");
-                console.log( "A" - "B" + 2);
-            },
-        }
-    };
-
-    //function getAllChangeNodes(treeId, treeNode) {
-    //   console.log(1999999999991);
-    //   var treeObj = $.fn.zTree.getZTreeObj("tree");
-    //   var nodes = treeObj.getCheckedNodes(true);
-    //   //console.log(nodes);
-    //   $('#mytest').html(JSON.stringify(nodes));
-    //   var data={};
-    //   data["jsonTree"] = JSON.stringify(nodes);
-    //   console.log(data["jsonTree"]);
-    //}
-
-    function zTreeOnClick(event, treeId, treeNode) {
-        categoryTree.selectNode(treeNode);
-        //这里可以根据需要，添加其他事件。
-    };
-
-    //var zNodes =[
-    //    {id:1, pId:0, name:"192.168.30.147"},
-    //    {id:101, pId:1, name:"gameserver1 v1.1"},
-    //    {id:102, pId:1, name:"gameserver2 v1.1"},
-    //    {id:103, pId:1, name:"gameserver3 v1.1"},
-    //    {id:104, pId:1, name:"gameserver4 v1.1"},
-    //    {id:105, pId:1, name:"gameserver5 v1.1"},
-
-    //    {id:6, pId:0, name:"192.168.30.148"},
-    //    {id:601, pId:6, name:"gameserver11 v1.2"},
-    //    {id:602, pId:6, name:"gameserver12 v1.2"},
-    //    {id:603, pId:6, name:"gameserver13 v1.2"}
-    //];
-    //var zNodes = {{ List|safe }};
-    var zNodes = [{"pId": 0, "id": 1, "name": "ou=Services,dc=ldap,dc=skymoons,dc=com"}, {"pId": 1, "id": 11, "name": ["pkq"]}, {"pId": 11, "id": 100001, "name": ["pkq_01"]}, {"pId": 11, "id": 100002, "name": ["pkq_02"]}, {"pId": 11, "id": 100003, "name": ["pkq_03"]}, {"pId": 11, "id": 100004, "name": ["pkq_04"]}, {"pId": 1, "id": 111, "name": ["saierhao"]}, {"pId": 111, "id": 100005, "name": ["saierhao_01"]}, {"pId": 1, "id": 1111, "name": ["wulinwaizhuan"]}, {"pId": 1, "id": 11111, "name": ["logmonitor"]}];
-    $(document).ready(function(){
-        var t = $("#tree");
-        t = $.fn.zTree.init(t, setting, zNodes);
-        demoIframe = $("#testIframe");
-        demoIframe.bind("load", loadReady);
-        var zTree = $.fn.zTree.getZTreeObj("tree");
-        //zTree.selectNode(zTree.getNodeByParam("id", 101));
-        var a = $('#register');
-        a.on('click', function () {
-            //alert('Hello!');
-            var treeObj = $.fn.zTree.getZTreeObj("tree");
-            var checkedNodes = treeObj.getCheckedNodes(true);
-            var nodes = treeObj.getNodes();
-            for (var i =0, l=checkedNodes.length; i<l;i++){
-                console.log(checkedNodes[i]);
-            }
-            var data={};
-            $.ajax({
-                url:"/data/",
-                data:{data:JSON.stringify(nodes,['name','checked','children'])},
-                type:'POST',
-                //成功之后操作
-                //success:function(arg){
-                //    alert(data)
-                //}
-            });
-        });
-    //-------------------------------------------------------
-        $("#uploadFile").uploadify({
-        /*注意前面需要书写path的代码*/
-        'swf': '/static/image/uploadify/uploadify.swf',
-        'uploader': '/upload_script/', //请求的Action  
-        'cancelImg': '/static/image/uploadify/uploadify-cancel.png',
-        'method': 'GET',
-        'queueID': 'fileQueue', //和存放队列的DIV的id一致   
-        'fileObjName': 'uploadFile',//和input的name属性值保持一致就好，Struts2就能处理了     
-        'auto': false, //是否自动开始   
-        'multi': true, //是否支持多文件上传   
-        'buttonText': '上传', //按钮上的文字  
-        'simUploadLimit': 10, //一次同步上传的文件数目   
-        'sizeLimit': 19871202, //设置单个文件大小限制                  
-        'queueSizeLimit': 5, //限制在一次队列中的次数（可选定几个文件）。默认值= 999，而一次可传几个文件有 simUploadLimit属性决定。  
-        'fileSizeLimit': 10 * 1024 * 1024, //设置单个文件大小限制，单位为byte ,10M  
-        'removeCompleted': true,
-        'removeTimeout': 0.5,
-        'requeueErrors': true,
-        'onUploadProgress' : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal,queueBytesLoaded) {  
-
-            $("#result").append("<div>文件\""+file.name+"\"共"+totalBytesTotal+"字节，已上传"+totalBytesUploaded + "字节!</div><br/>");  
-            if(totalBytesUploaded==totalBytesTotal){  
-            $("#result").append("<div>文件\""+file.name+"\"上传成功！</div><br/>");  
-            }  
-        },  
-        'onUploadComplete': function (file) {
-             $("#result").append("<div>文件"+file.name+"上传成功！</div><br/>");  
-        },
-        'onUploadSuccess': function (file, data, response) {
-            if ($("#hidFile").val() == "") {
-                $("#hidFile").val(data);
-                $("#showFile").text(data);
-            } else {
-                $("#hidFile").val($("#hidFile").val() + "|" + data + "");
-                $("#showFile").text($("#showFile").text() + ";" + data + "");
-            }
-        },
-        'onUploadError': function (file, errorCode, errorMsg, errorString, swfuploadifyQueue) {
-            $("#result").html(errorString);  
-        },
-    });
-
-    });
-
-    function loadReady() {
-        var bodyH = demoIframe.contents().find("body").get(0).scrollHeight,
-                htmlH = demoIframe.contents().find("html").get(0).scrollHeight,
-                maxH = Math.max(bodyH, htmlH), minH = Math.min(bodyH, htmlH),
-                h = demoIframe.height() >= maxH ? minH:maxH ;
-        if (h < 530) h = 530;
-        demoIframe.height(h);
-    }
-    //console.log(11111111111111112);
-</script>
+    <script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/plugins/fastclick/fastclick.js"></script>
+    <script src="/static/dist/js/app.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
 </body>
 </html>

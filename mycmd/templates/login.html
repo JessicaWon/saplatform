@@ -3,20 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>SKYMOONS SA | Log in</title>
-  <!-- Tell the browser to be responsive to screen width -->
+  <title>登录  | SKYMOONS SA</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Theme style -->
   <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
-  <!-- iCheck -->
   <link rel="stylesheet" href="/static/plugins/iCheck/square/blue.css">
-
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -27,72 +19,32 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    
-	<img src="/static/dist/img/user2-160x160.jpg" class="img-thumbnail" alt="User Image">
-	<a href="http://10.10.11.69/index/"><b>Sky</b>SA</a>
+  <img src="/static/dist/img/saky_logo.png" alt="skymoons">
+  <a href="http://123.59.150.94:8080/index/"><b>Sky</b>SA</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Sign in to manage your system</p>
-
-    <form action="http://10.10.11.69/login/" method="post">
-<!--旧的格式，但是无法登录
-      <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Username" >
-        {{form.username}}
-        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-      </div>
-      <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password" id="password">
-        {{form.password}}
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-      </div>
--->
+    <h2>登录</h2>
+    <form action="http://123.59.150.94:8080/login/" method="post">
     <div>
         <div class="form-group">
-            <label for="username">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username</label><br>
-<!--                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--->             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.username }}
+           {{ form.username }}
                 {{ field.errors }}
         </div>
        <div class="form-group">
-            <label for="password">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password</label><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.password }}
-                {{ field.errors }}
+           {{ form.password }}
+            {{ field.errors }}
         </div>
-     </div>
-
-      <div class="row">
-        <div class="col-xs-8">
-          <div class="checkbox icheck">
-            <label>
-              <input type="checkbox"> Remember Me
-            </label>
+         <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
           </div>
-        </div>
-        <!-- /.col -->
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-        </div>
-        <!-- /.col -->
-      </div>
+     </div>
     </form>
-
-    <div class="social-auth-links text-center">
-      <p>- OR -</p>
-      <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa btn-facebook"></i> Sign in using
-        mail</a>
-
-    </div>
-    <!-- /.social-auth-links -->
-
-    <a href="#">I forgot my password</a><br>
-
+    <a href="#">忘记密码？</a><br>
   </div>
-  <!-- /.login-box-body -->
+
 </div>
 <!-- /.login-box -->
-
 <!-- jQuery 2.1.4 -->
 <script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 <!-- Bootstrap 3.3.5 -->

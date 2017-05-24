@@ -68,26 +68,26 @@
         <li class="header">MAIN NAVIGATION</li>
 
         <li class="treeview">
-          <a href="http://10.10.11.69/index/">
+          <a href="http://123.59.150.94:8080/index/">
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
 
         <li>
           <li class="treeview">
-          <a href="http://10.10.11.69/general/">
+          <a href="http://123.59.150.94:8080/general/">
             <i class="fa fa-th"></i> <span>Servers status</span>
           </a>
         </li>
 
         <li class="active treeview">
-          <a href="http://10.10.11.69/dir/">
+          <a href="http://123.59.150.94:8080/dir/">
             <i class="fa fa-edit"></i> <span>Display files</span>
           </a>
         </li>
 
        <li class="treeview">
-           <a href="http://10.10.11.69/user/">                    
+           <a href="http://123.59.150.94:8080/user/">                    
                <i class="fa fa-gears"></i> <span>Privileges management</span>                    
                <i class="fa fa-angle-left pull-right"></i>               
            </a>

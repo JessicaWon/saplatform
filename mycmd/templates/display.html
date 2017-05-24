@@ -1,556 +1,661 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Skymoons | SAplatform</title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
-  <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-  <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css">
-  <link href="/static/image/uploadify/uploadify.css" type="text/css" rel="stylesheet" />
-  <script type="text/javascript" src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script> 
-  <script type="text/javascript" src="/static/image/uploadify/jquery.uploadify-3.1.min.js"></script>
-  
-  <script src="/static/js/jquery.ztree.all-3.5.min.js"></script>
-</head>
-
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-
-  <header class="main-header">
-  
-    <a href="/index/" class="logo">
-      <span class="logo-mini"><b>A</b>LT</span>
-      <span class="logo-lg"><b>Skymoons</b>SA</span>
-    </a>
-
-    <nav class="navbar navbar-static-top" role="navigation">
-      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-    </nav> 
-  </header>
-
-  <aside class="main-sidebar">
-    <section class="sidebar">
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="/static/dist/img/user2-160x160.jpg" class="img-thumbnail" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Skymoons</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
-      <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu">
-        {% block sidebar %}
-
-        <li class="header">MAIN NAVIGATION</li>
-
-        <li class="treeview">
-          <a href="http://10.10.11.69/index/">
-            <i class="fa fa-dashboard"></i> <span>概览</span>
-          </a>
-        </li>
-
-        <li>
-          <li class="treeview">
-          <a href="http://10.10.11.69/general/">
-            <i class="fa fa-th"></i> <span>服务状态</span>
-          </a>
-        </li>
-
-        <li class="active treeview">
-          <a href="http://10.10.11.69/dir/">
-            <i class="fa fa-edit"></i> <span>文件更新</span>
-          </a>
-        </li>
-
-       <li class="treeview">
-           <a href="http://10.10.11.69/user/">                    
-               <i class="fa fa-gears"></i> <span>权限管理</span>                    
-               <i class="fa fa-angle-left pull-right"></i>               
-           </a>
-           <ul class="treeview-menu">
-               <li class="treeview">
-                   <a href="/admin">管理</a>
-                   <i class="fa fa-angle-left pull-right"></i>
-                   <ul class="treeview-menu">
-                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
-                       <li class="treeview">
-                           <a href="/admin/role">                                    
-                               <i class="fa fa-circle-o"></i>权限<i class="fa fa-angle-left pull-right"></i>                                
-                           </a>
-                           <ul class="treeview-menu">
-                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> 路由</a></li>
-                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>权限</a></li>
-                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
-                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>指派</a></li>
-                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>菜单</a></li>
-                           </ul>
-                       </li>
-                   </ul>
-               </li>
-           </ul>
-       </li>
-        {% endblock %}
-      </ul>
-    </section>
-  </aside>
-
-  <div class="content-wrapper">
-<!--     <section class="content">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="box box-primary">
-				<div class="box-header with-border">
-				  <h3 class="box-title">更新文件</h3>
-				</div>
-				<form name=form method="post" enctype="multipart/form-data">
-					<div class="item2 mt15">
-						<span class="reg-tit3">上传附件：
-						  <div class="reg-inf">
-							<input type="file" name="uploadFile" id="uploadFile" multiple="" class="pub-btn" />
-							  <div id="fileQueue"></div>
-							  <a href="javascript:$('#uploadFile').uploadify('upload','*')">上传文件</a>
-
-							  <a href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a></br></br>
-								 
-								<label id="showFile" name="showFile"></label>
-							   
-								<div class="form-group">
-								  <label for="all_gameserver" class="col-sm-2 control-label">所有区服</label>
-								  <input type="checkbox" id="all_gameserver" value="all_gameserver" name="all_gameserver" ONCLICK="checkboxclickone()"></br>
-								</div>
-								<div class="form-group">
-								  <label for="id_gameserver" class="col-sm-2 control-label">输入区服id</label>
-								  <input id="input_gameserver" type="text" name="input_gameserver" class="form-control" placeholder="格式为2,10等，区服中间以英文逗号分隔" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')" style="width:500px"/>
-									{{form.input_gameserver_id}}
-									{{ field.errors }}
-								</div>
-								<div class="form-group">
-									<label for="types" class="col-sm-2 control-label">更新类型选择</label></br></br>
-									<div class="col-sm-8" style="width:635px;padding-left: 120px;"  >
-										<select id="types" name="types" class="form-control m-b" multiple size="3">
-										  <option value="activity_update">活动更新</option>
-										  <option value="bug_fix">bug修复</option>
-										  <option value="game_update">游戏升级</option>
-										</select>
-
-									</div></br></br></br></br></br></br>
-								</div>
-
-						  </div>
-						</span>
-					</div>
-				  <button type="submit" class="btn btn-primary" id="register" >更新</button></br></br>
-				</form>
-			</div>
-		</div>
-	  </div>
-	</section>
- -->
-
-    <section class="content-header">
-      <h1>
-        更新文件
-        <small>version1.0</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="/index/"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">updatefile</li>
-      </ol>
-    </section>
-
-	    <section class="content">
-      <div class="row">
-        <div class="col-md-5">
-           <div class="box box-primary">
-				<div class="box-header with-border">
-				  <h3 class="box-title"></h3>
-				</div>
-				<form name=form method="post" enctype="multipart/form-data">
-					<div class="item2 mt15">
-						<span class="col-sm-8" >上传附件：</span></br>
-						  <div class="reg-inf">
-							<input type="file" name="uploadFile" id="uploadFile" multiple="" class="pub-btn" style="padding-left: 120px;" />
-							  <div id="fileQueue"></div>
-							  <a href="javascript:$('#uploadFile').uploadify('upload','*')" font="bold">上传文件</a>
-
-							  <a href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a><button id="canceluploadfiles" name="canceluploadfiles" class="label label-warning" ONCLICK="canceluploadfile()">重新上传</button></br>
-
-
-								<label id="showFile" name="showFile" ></label></br>
-									<!-- {{filename}} -->
-								
-
-								<div class="form-group">
-								  <label for="all_gameserver" class="col-sm-2 control-label">所有区服</label>
-								  <input type="checkbox" id="all_gameserver" value="all_gameserver" name="all_gameserver" ONCLICK="checkboxclickone()"></br>
-								  <input id="exclu_gameserver" type="text" name="exclu_gameserver" class="form-control" placeholder="排除区服id，格式为2,10，区服中间以英文逗号分隔,可以为空" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')" style="display:none;width:400px"/>
-								</div></br>
-								<div class="form-group">
-								  <label for="id_gameserver" class="col-sm-2 control-label">输入区服</label>
-								  <input id="input_gameserver" type="text" name="input_gameserver" class="form-control" placeholder="格式为2,10，区服中间以英文逗号分隔" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')" style="width:400px"/>
-
-								</div>
-								<div class="form-group">
-									<label for="types" class="col-sm-2 control-label">更新类型选择</label></br></br>
-									<div class="col-sm-8" style="width:515px;padding-left: 100px;"  >
-										<select id="types" name="types" class="form-control m-b" multiple size="3">
-										  <option value="activity_update">活动更新</option>
-										  <option value="bug_fix">bug修复</option>
-										  <option value="game_update">游戏升级</option>
-										</select>
-
-									</div></br></br></br></br></br></br>
-								</div>
-
-						  </div>
-						</span>
-					</div>
-				  <div class="form-group">
-					<div class="col-sm-4 col-sm-offset-2">
-						<button class="btn btn-white" type="reset">取消</button>
-						<button type="submit" class="btn btn-primary" id="register" >更新</button></br></br>
-
-                    </div>
-                  </div>						
-				</form>
-			</div>
-        </div>
-        <div class="col-md-7">
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title">更新记录</h3><font size="1" color="grey">(只显示最新五次更新活动)</font>
-
-              <div class="box-tools pull-right">
-                <div class="has-feedback">
-                  <input type="text" class="form-control input-sm" placeholder="Search update logs">
-                  <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                </div>
-              </div>
-              <!-- /.box-tools -->
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body no-padding">
-              <div class="mailbox-controls">
-                <!-- Check all button -->
-                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                </button>
-                <div class="btn-group">
-                </div>
-                <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                <div class="pull-right">
-                  1-50/200
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                  </div>
-                  <!-- /.btn-group -->
-                </div>
-                <!-- /.pull-right -->
-              </div>
-              <div class="table-responsive mailbox-messages">
-                <table class="table table-hover table-striped">
-                  <tbody>
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                    <td class="mailbox-name"><a href="/userlist/">更新工程师</a></td>
-                    <td class="mailbox-subject">是否为所有服更新</td>
-					<td class="mailbox-subject">更新区服范围</td>
-					<td class="mailbox-subject">更新文件路径</td>
-                    <td class="mailbox-attachment">更新目的为</td>
-                    <td class="mailbox-date">更新是否成功</td>
-					<td class="mailbox-date">更新失败区服数</td>
-                  </tr>				  
-				  {% for outcome in outcomes %}
-				  {% if forloop.first %}
-                  <tr>
-                    <td><input type="checkbox" bgcolor="black"></td>
-<!--                    <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
-					<td class="label label-success">最新更新</span>
-					<!--<a class="tag-link-94 tag-link-position-3">新</a>-->
-                    <td class="mailbox-name" ><a href="/userlist/" title={{outcome.update_time}}>{{outcome.update_by}}</a></td>
-                    <td class="mailbox-subject">{{outcome.is_all_gameservers}}</td>
-					<td class="mailbox-subject">{{outcome.input_gameserver_id}}</td>
-					<td class="mailbox-subject">{{outcome.update_files_dir}}下{{outcome.update_files}}</td>
-                    <td class="mailbox-attachment">{{outcome.update_type}}</td>
-                    <td class="mailbox-date">{{outcome.update_outcome}}</td>
-					<td class="mailbox-date">{{outcome.update_fail_server}}详情</td>
-                  </tr>
-				  {% else %}
-                  <tr>
-                    <td><input type="checkbox"></td>
-                    <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                    <td class="mailbox-name"><a href="/userlist/">{{outcome.update_by}}</a></td>
-                    <td class="mailbox-subject">{{outcome.is_all_gameservers}}</td>
-					<td class="mailbox-subject">{{outcome.input_gameserver_id}}</td>
-					<td class="mailbox-subject">{{outcome.update_files_dir}}下{{outcome.update_files}}</td>
-                    <td class="mailbox-attachment">{{outcome.update_type}}</td>
-                    <td class="mailbox-date">{{outcome.update_outcome}}</td>
-					<td class="mailbox-date">{{outcome.update_fail_server}}
-
-					</td>
-                  </tr>		
-				  {% endif %}				  
-				  {% endfor %}
-                  </tbody>
-                </table>
-                <!-- /.table -->
-              </div>
-
-              <!-- /.mail-box-messages -->
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer no-padding">
-              <div class="mailbox-controls">
-                <!-- Check all button -->
-                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                </button>
-                <div class="btn-group">
-                </div>
-                <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                <div class="pull-right">
-                  1-50/200
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                  </div>
-                  <!-- /.btn-group -->
-                </div>
-                <!-- /.pull-right -->
-              </div>
-            </div>
-          </div>
-          <!-- /. box -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-    </section></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
-
-  </div>
-</div>
-  <!-- /.content-wrapper -->
-
-
-<script>
-    //----------------------------------------------------------
-    var zTree;
-    var demoIframe;
-
-    function addHoverDom(treeId, treeNode) {
-        var sObj = $("#" + treeNode.tId + "_span");
-        if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
-        var addStr = "<span class='button remove' id='removeBtn_" + treeNode.tId
-                + "' title='add node' onfocus='this.blur();'></span>";
-
-        addStr += "<span class='button add' id='addBtn_" + treeNode.tId + "'></span>";
-        addStr += "<span class='button edit' id='editBtn_" + treeNode.tId + "'></span>";
-        sObj.after(addStr);
-        var btn = $("#addBtn_"+treeNode.tId);
-        if (btn) btn.bind("click", function(){
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-            zTree.addNodes(treeNode, {id:(1000 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
-            return false;
-        });
-    };
-    function checkboxclickone(){
-        if (document.getElementById("all_gameserver").checked){
-            document.form.input_gameserver.disabled =true;
-            var test = document.getElementById("all_gameserver").checked;
-            console.log(test);
-            document.getElementById("input_gameserver").value="";
-			$("#exclu_gameserver").show();
-            alert("全选后则不能输入单个的区服");
-            
-            }
-        else{
-            document.form.input_gameserver.disabled =false;
-            var test = document.getElementById("all_gameserver").checked;
-            console.log(test);
-			$("#exclu_gameserver").hide();
-            alert("不选择所有区服就可以输入特定的区服");
-            }
-    };
-	function canceluploadfile(){
-		alert("确定删除刚刚上传的文件？");
-		console.log("执行js");
-	};
-
-    function removeHoverDom(treeId, treeNode) {
-        $("#addBtn_"+treeNode.tId).unbind().remove();
-        $("#removeBtn_"+treeNode.tId).unbind().remove();
-        $("#editBtn_"+treeNode.tId).unbind().remove();
-    };
-
-    var setting = {
-        //async useless
-        //async: {
-        //    enable: true,
-        //},
-        check: {
-            enable: true,
-            chkboxType: { "Y": "ps", "N": "ps" }
-        },
-        view: {
-            addHoverDom: addHoverDom,
-            removeHoverDom: removeHoverDom,
-            dblClickExpand: true,
-            showLine: true,
-            selectedMulti: true
-        },
-        data: {
-            simpleData: {
-                enable:true,
-                idKey: "id",
-                pIdKey: "pId",
-                rootPId: ""
-            }
-        },
-        callback: {
-            beforeClick: function(treeId, treeNode) {
-              console.log(222222)
-            },
-            onClick: function(treeId, treeNode) {
-                alert(treeNode.tId + ", " + treeNode.name);
-                console.log(333333333)
-            },
-            onCheck: function(treeId, treeNode) {
-                alert(treeNode.tId + ", " + treeNode.name);
-                console.log(66666666);
-                var treeObj = $.fn.zTree.getZTreeObj("tree");
-                //var checkedNodes = treeObj.getSelectedNodes();
-                var checkedNodes = treeObj.getCheckedNodes(true);
-                var nodes = treeObj.getNodes();
-                for (var i =0, l=checkedNodes.length; i<l;i++){
-                    console.log(checkedNodes[i]);
-                }
-                var data={};
-                data["jsonTree"] = JSON.stringify(nodes,['name','checked','children']);
-                console.log(data["jsonTree"]);
-            },
-        }
-    };
-
-
-    function zTreeOnClick(event, treeId, treeNode) {
-        categoryTree.selectNode(treeNode);
-        //这里可以根据需要，添加其他事件。
-    };
-
-    //var zNodes =[
-    //    {id:1, pId:0, name:"192.168.30.147"},
-    //];
-    //var zNodes = {{ List|safe }};
-    var zNodes =[{id:1, pId:0, name:"192.168.30.147"}];
-
-    $(document).ready(function(){
-        var t = $("#tree");
-        t = $.fn.zTree.init(t, setting, zNodes);
-        demoIframe = $("#testIframe");
-        demoIframe.bind("load", loadReady);
-        var zTree = $.fn.zTree.getZTreeObj("tree");
-        //zTree.selectNode(zTree.getNodeByParam("id", 101));
-        var a = $('#register');
-        a.on('click', function () {
-            //alert('Hello!');
-            var treeObj = $.fn.zTree.getZTreeObj("tree");
-            var checkedNodes = treeObj.getCheckedNodes(true);
-            var nodes = treeObj.getNodes();
-            for (var i =0, l=checkedNodes.length; i<l;i++){
-                console.log(checkedNodes[i]);
-            }
-            var data={};
-            $.ajax({
-                url:"/data/",
-                data:{data:JSON.stringify(nodes,['name','checked','children'])},
-                type:'POST',
-                //成功之后操作
-                //success:function(arg){
-                //    alert(data)
-                //}
-            });
-        });
-    //-------------------------------------------------------
-        $("#uploadFile").uploadify({
-        /*注意前面需要书写path的代码*/
-        'swf': '/static/image/uploadify/uploadify.swf',
-        'uploader': '/upload_script/', //请求的Action  
-        'cancelImg': '/static/image/uploadify/uploadify-cancel.png',
-        'method': 'POST',
-        'queueID': 'fileQueue', //和存放队列的DIV的id一致   
-        'fileObjName': 'uploadFile',//和input的name属性值保持一致就好，Struts2就能处理了     
-        'auto': false, //是否自动开始   
-        'multi': true, //是否支持多文件上传   
-        'buttonText': '选择上传文件', //按钮上的文字  
-        'simUploadLimit': 50, //一次同步上传的文件数目   
-        'sizeLimit': 19871202, //设置单个文件大小限制                  
-        'queueSizeLimit': 50, //限制在一次队列中的次数（可选定几个文件）。默认值= 999，而一次可传几个文件有 simUploadLimit属性决定。  
-        'fileSizeLimit': 10 * 1024 * 1024, //设置单个文件大小限制，单位为byte ,10M  
-        'removeCompleted': true,
-        'removeTimeout': 0.5,
-        'requeueErrors': true,
-        'onUploadProgress' : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal,queueBytesLoaded) {  
-
-            $("#result").append("<div>文件\""+file.name+"\"共"+totalBytesTotal+"字节，已上传"+totalBytesUploaded + "字节!</div><br/>");  
-            if(totalBytesUploaded==totalBytesTotal){  
-            $("#result").append("<div>文件\""+file.name+"\"上传成功！</div><br/>");  
-            }  
-        },  
-        'onUploadComplete': function (file) {
-             $("#result").append("<div>文件"+file.name+"上传成功！</div><br/>");  
-        },
-        'onUploadSuccess': function (file, data, response) {
-            if ($("#hidFile").val() == "") {
-                $("#hidFile").val(data);
-                $("#showFile").text(data);
-            } else {
-                $("#hidFile").val($("#hidFile").val() + "|" + data + "");
-                $("#showFile").html($("#showFile").html() + "" + data + "");
-            }
-        },
-        'onUploadError': function (file, errorCode, errorMsg, errorString, swfuploadifyQueue) {
-            $("#result").html(errorString);  
-        },
-    });
-
-    });
-
-    function loadReady() {
-        var bodyH = demoIframe.contents().find("body").get(0).scrollHeight,
-                htmlH = demoIframe.contents().find("html").get(0).scrollHeight,
-                maxH = Math.max(bodyH, htmlH), minH = Math.min(bodyH, htmlH),
-                h = demoIframe.height() >= maxH ? minH:maxH ;
-        if (h < 530) h = 530;
-        demoIframe.height(h);
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Skymoons | 上传文件</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="/static/css/zTreeStyle/metro.css">
+    <link href="/static/image/uploadify/uploadify.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <script type="text/javascript" src="/static/image/uploadify/jquery.uploadify-3.1.min.js"></script>
+    <script src="/static/js/jquery.ztree.all-3.5.min.js"></script>
+    <style>
+    .form-horizontal .form-group{
+        margin-bottom: 40px
     }
-	
-    //console.log(11111111111111112);
+    .hide{
+        display: none;
+    }
+    .help-inline{
+        display: none
+    }
+    .progress-bar{
+        transition: all 0.1s linear;
+    }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <!--   左 -->
+            <a href="index2.html" class="logo">
+                <span class="logo-mini"> <b>Skymoons</b>
+                    SA
+                </span>
+                <span class="logo-lg"> <b>Skymoons</b>
+                    SA
+                </span>
+            </a>
+            <!--   /左 -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!--   右侧 -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="/static/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <span class="hidden-xs">{{ username }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src="/static/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <p>
+                                        {{username}} - VideoGame
+                                        <small>Member since Nov. 2012</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Followers</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Sales</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Friends</a>
+                                        </div>
+                                    </div>
+                                    <!-- /.row --> </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">主页</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="/logout/" class="btn btn-default btn-flat">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                        <li>
+                            <a href="#" data-toggle="control-sidebar"> <i class="fa fa-gears"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--   /右侧 --> </nav>
+        </header>
+        <!-- /头部 -->
+        <!-- 菜单 -->
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <ul class="sidebar-menu">
+                    {% block sidebar %}
+                    <li class=" treeview">
+                        <a href="http://123.59.150.94:8080/index/"> <i class="fa fa-dashboard"></i>
+                            <span>概览</span>
+                        </a>
+                    </li>
+                    <li class="treeview ">
+                        <a href="http://123.59.150.94:8080/general/">
+                            <i class="fa fa-th"></i>
+                            <span>服务状态</span>
+                        </a>
+                    </li>
+                    <li class="treeview active">
+                        <a href="http://123.59.150.94:8080/dir/">
+                            <i class="fa fa-edit"></i>
+                            <span>文件更新</span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="active">
+                                <a href="http://123.59.150.94:8080/dir/">
+                                    <i class="fa fa-circle-o"></i>
+                                    文件上传
+                                </a>
+                            </li>
+                            <li>
+                                <a href="http://123.59.150.94:8080/list/">
+                                    <i class="fa fa-circle-o"></i>
+                                    更新记录表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="http://123.59.150.94:8080/privileges/">
+                            <i class="fa fa-gears"></i>
+                            <span>权限管理</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="/user">
+                                    <i class="fa fa-circle-o"></i>
+                                    添加用户
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endblock %}
+                </ul>
+            </section>
+        </aside>
+        <!-- /菜单 -->
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>
+                    更新文件
+                    <small>version1.0</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/index/">
+                            <i class="fa fa-dashboard"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="active">updatefile</li>
+                </ol>
+            </section>
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"></h3>
+                            </div>
+                            <form name='form' method="post" class="form-horizontal" enctype="multipart/form-data" onsubmit="return check_form()" >
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <!--    文件上传 -->
+                                        <label class="col-sm-2 control-label col-sm-offset-1">上传附件</label>
+                                        <div class="col-sm-4">
+                                            <div class="reg-inf">
+                                                <input type="file" name="uploadFile" id="uploadFile" multiple="" class="pub-btn" />
+                                                <div id="fileQueue"></div>
+                                                <a class="btn btn-success btn-xs" href="javascript:$('#uploadFile').uploadify('upload','*')">上传文件</a>
+                                                <a class="btn btn-default btn-xs" href="javascript:$('#uploadFile').uploadify('cancel', '*')">取消所有上传</a>
+                                                <button id="canceluploadfiles" name="canceluploadfiles" class="btn btn-warning btn-xs" onClick="canceluploadfile()">重新上传</button>
+                                                <label id="showFile" name="showFile" ></label>
+                                            </div>
+                                        </div>
+                                        <span class="help-inline text-danger">未上传文件</span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="all_gameserver" class="col-sm-2 control-label col-sm-offset-1">所有区服</label>
+                                        <div class="col-sm-8">
+                                            <input type="checkbox" id="all_gameserver" value="all_gameserver" name="all_gameserver" >
+                                            全选
+                                            <span class="help-inline text-danger">
+                                                (
+                                                <i class="fa fa-gear"></i>
+                                                提示：不选择所有区服可以输入特定的区服)
+                                            </span>
+                                        </div>
+                                            <span class="help-block text-danger">
+                                                (
+                                                <i class="fa fa-gear"></i>
+                                                提示：只能上传.beam 或者是.config文件
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="all_gameserver" class="col-sm-2 control-label col-sm-offset-1">排除区服</label>
+                                        <div class="col-sm-8">
+                                            <input id="exclu_gameserver" type="text" name="exclu_gameserver" class="form-control" placeholder="格式为2,10，区服中间以英文逗号分隔,可以为空" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')"   disabled="disabled" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_gameserver" class="col-sm-2 control-label col-sm-offset-1">输入区服</label>
+                                        <div class="col-sm-8">
+                                            <textarea  id="input_gameserver" type="text" name="input_gameserver" class="form-control" placeholder="格式为2,10，区服中间以英文逗号分隔,不能为空" onkeypress="this.value=this.value.replace(/[^0-9\,]/,'')" onkeyup="this.value=this.value.replace(/[^0-9\,]/,'')"></textarea>
+                                        </div>
+                                        <span class="help-inline text-danger">未输入区服</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_gameserver" class="col-sm-2 control-label col-sm-offset-1">选择操作</label>
+                                        <div class="col-sm-8">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="updatename" checked="checked" id="type_sync">同步</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="updatename" id="type_update">更新</label>
+                                            </div>
+                                            <!--  提示信息 -->
+                                            <span class="help-inline text-danger">同步必须选中</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="types" class="col-sm-2 control-label col-sm-offset-1">更新类型选择</label>
+                                        <div class="col-sm-2 col-xs-12">
+                                            <select id="types" name="types" class="form-control m-b">
+                                                <option value="activity_update">活动更新</option>
+                                                <option value="bug_fix">bug修复</option>
+                                                <option value="game_update">游戏升级</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-3">
+                                    <!-- 影藏传递 -->
+                                <input type="hidden" id="X-Progress-ID" name="X-Progress-ID" value=""/>
+                                    <button class="btn btn-white btn-md" type="reset">
+                                        <i class="fa fa-close"></i>
+                                        取消
+                                    </button>
+                                  <!--   <button type="button" class="btn btn-primary btn-md" id="register" data-toggle="modal" data-target="#myModal"> -->
+                                    <button type="button" class="btn btn-primary btn-md" id="register">
+                                        <i class="fa fa-refresh"></i>
+                                        更新
+                                    </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b>
+            1.0.0
+        </div> <strong>Copyright &copy; 2016-2017
+            <a href="http://www.skymoons.com">Skymoons</a>
+            .</strong>
+        All rights
+        reserved.
+    </footer>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li>
+                <a href="#control-sidebar-home-tab" data-toggle="tab">
+                    <i class="fa fa-home"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#control-sidebar-settings-tab" data-toggle="tab">
+                    <i class="fa fa-gears"></i>
+                </a>
+            </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading">Recent Activity</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                <p>Will be 23 on April 24th</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                <p>New phone +1(800)555-1234</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+                                <p>nora@example.com</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-file-code-o bg-green"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+                                <p>Execution time 5 seconds</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+                <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Custom Template Design
+                                <span class="label label-danger pull-right">70%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Update Resume
+                                <span class="label label-success pull-right">95%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Laravel Integration
+                                <span class="label label-warning pull-right">50%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Back End Framework
+                                <span class="label label-primary pull-right">68%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <form method="post">
+                    <h3 class="control-sidebar-heading">General Settings</h3>
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Report panel usage
+                            <input type="checkbox" class="pull-right" checked></label>
+                        <p>Some information about this general settings option</p>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Allow mail redirect
+                            <input type="checkbox" class="pull-right" checked></label>
+                        <p>Other sets of options are available</p>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Expose author name in posts
+                            <input type="checkbox" class="pull-right" checked></label>
+                        <p>Allow the user to show his name in blog posts</p>
+                    </div>
+                    <!-- /.form-group -->
+                    <h3 class="control-sidebar-heading">Chat Settings</h3>
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Show me as online
+                            <input type="checkbox" class="pull-right" checked></label>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Turn off notifications
+                            <input type="checkbox" class="pull-right"></label>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Delete chat history
+                            <a href="javascript::;" class="text-red pull-right">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                        </label>
+                    </div>
+                    <!-- /.form-group --> </form>
+            </div>
+            <!-- /.tab-pane --> </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!--提交的弹出层-->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">提交进度</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 模态框的进度条 -->
+                <div class="progress-group progress-striped active">
+                    <span class="progress-text">进度</span>
+                    <span class="progress-number">
+                        <b id="finishedMsv"></b>
+                        /<i id="totalMsv"></i>
+                    </span>
+                    <div class="progress sm">
+                        <div class="progress-bar progress-bar-yellow"  style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="reload">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/dist/js/app.min.js"></script>
+<script src="/static/dist/js/demo.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script>
+
+var PROCESS_TIMES = 5;
+var PROCESS_CURR = 0;
+
+$(function() {
+
+            function GetPercent(num, total) {
+                num = parseFloat(num);
+                total = parseFloat(total);
+                if (isNaN(num) || isNaN(total)) {
+                    return "-";
+                }
+                return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00 + "%");
+            }
+
+            var intervalData = function(para) {
+                PROCESS_CURR = PROCESS_CURR+1;
+                console.log(PROCESS_CURR)
+                $.ajax({
+                    url: "/process/?result_jid=" + para,
+                    type: "get",
+                    cache: false,
+                    success: function(data) {
+                        console.log(data)
+                        var muchData = JSON.parse(data);
+                        $("#finishedMsv").text(muchData.finishedgmsv)
+                        $("#totalMsv").text(muchData.allgmsv)
+                        var aa = parseInt(muchData.finishedgmsv);
+                        var bb = parseInt(muchData.allgmsv);
+                        var progressBar = GetPercent(aa, bb);
+                        console.log(progressBar)
+                        $(".progress-bar").css('width', progressBar);
+                        if (aa >= bb) {
+                            return false;
+                        }else{
+                            if(PROCESS_CURR<=PROCESS_TIMES){
+                                setTimeout(intervalData(para),500)
+                            }
+                        }
+                    }
+                })
+            }
+
+            $("#register").click(function() {
+                $("form").ajaxSubmit({
+                    url: "/dir/",
+                    type: "post",
+                    success: function(data) {
+                        console.log(data)
+                        $('#myModal').modal('show') //模态框显示
+                        var datas = JSON.parse(data);
+                        var foogo = datas.result_jid;
+
+                        //clearInterval(intervalData(foogo))
+
+                        if (foogo) {
+                            //setInterval(intervalData(foogo), 500); //每秒发送一次
+                            setTimeout(intervalData(foogo),0)
+                        }else{
+                            console.log('错误')
+                        }
+                    }
+                });
+                //定期发送数据
+            });
+            $("#reload").click(function(){
+                 $('#myModal').modal('hide') //模态框影藏
+                window.location.reload()
+
+            });
+
+
+
+        // 选择操作
+        $(".checkbox input[type='checkbox']").on('change', function(){
+            if($("#type_sync").is(":checked")){
+                $(this).closest('.form-group').find(".help-inline").hide()
+            }else{
+                $(this).closest('.form-group').find(".help-inline").show()
+            }
+        });
+        //判断是否全选
+        $("#all_gameserver").change(function(){
+            if(this.checked){
+                $("#exclu_gameserver").attr("disabled", false);
+                $("#input_gameserver").attr("disabled", 'disabled');
+            }else{
+                $("#exclu_gameserver").attr("disabled", "disabled");
+                $("#input_gameserver").attr("disabled", false);
+            }
+        });
+    });
+
+
+
+        function checkboxclickone(){
+            if (document.getElementById("all_gameserver").checked){
+                document.form.input_gameserver.disabled =true;
+                var test = document.getElementById("all_gameserver").checked;
+                console.log(test);
+                document.getElementById("input_gameserver").value="";
+                $("#exclu_gameserver").show();
+                alert("全选后则不能输入单个的区服");
+                }
+            else{
+                document.form.input_gameserver.disabled =false;
+                var test = document.getElementById("all_gameserver").checked;
+                console.log(test);
+                $("#exclu_gameserver").hide();
+                alert("不选择所有区服就可以输入特定的区服");
+                }
+        };
+        function canceluploadfile(){
+            alert("确定删除刚刚上传的文件？");
+            console.log("执行js");
+        };
+            $("#uploadFile").uploadify({
+            /*注意前面需要书写path的代码*/
+            'swf': '/static/image/uploadify/uploadify.swf',
+            'uploader': '/upload_script/', //请求的Action
+            'cancelImg': '/static/image/uploadify/uploadify-cancel.png',
+            'method': 'POST',
+            'queueID': 'fileQueue', //和存放队列的DIV的id一致
+            'fileObjName': 'uploadFile',//和input的name属性值保持一致就好，Struts2就能处理了
+            'auto': false, //是否自动开始
+            'multi': true, //是否支持多文件上传
+            'buttonText': '选择上传文件', //按钮上的文字
+            'simUploadLimit': 50, //一次同步上传的文件数目
+            'sizeLimit': 19871202, //设置单个文件大小限制
+            'queueSizeLimit': 50, //限制在一次队列中的次数（可选定几个文件）。默认值= 999，而一次可传几个文件有 simUploadLimit属性决定。
+            'fileSizeLimit': 10 * 1024 * 1024, //设置单个文件大小限制，单位为byte ,10M
+            'removeCompleted': true,
+            'removeTimeout': 0.5,
+            'requeueErrors': true,
+            'onUploadProgress' : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal,queueBytesLoaded) {
+                $("#result").append("<div>文件\""+file.name+"\"共"+totalBytesTotal+"字节，已上传"+totalBytesUploaded + "字节!</div><br/>");
+                if(totalBytesUploaded==totalBytesTotal){
+                $("#result").append("<div>文件\""+file.name+"\"上传成功！</div><br/>");
+                }
+            },
+            'onUploadComplete': function (file) {
+                 $("#result").append("<div>文件"+file.name+"上传成功！</div><br/>");
+            },
+            'onUploadSuccess': function (file, data, response) {
+                if ($("#hidFile").val() == "") {
+                    $("#hidFile").val(data);
+                    $("#showFile").text(data);
+                } else {
+                    $("#hidFile").val($("#hidFile").val() + "|" + data + "");
+                    $("#showFile").html($("#showFile").html() + "" + data + "");
+                }
+            },
+            'onUploadError': function (file, errorCode, errorMsg, errorString, swfuploadifyQueue) {
+                $("#result").html(errorString);
+            },
+        });
+            function check_form(){
+                if(!$("#all_gameserver").is(":checked") && !$("#input_gameserver").val()){
+                    $("#input_gameserver").closest(".form-group").find('.help-inline').show();
+                    return false;
+                }else{
+                    $("#input_gameserver").closest(".form-group").find('.help-inline').hide();
+                }
+                var num =$("#uploadFile").data('uploadify').queueData.queueLength;
+                if(num == 0) {
+                    $("#uploadFile").closest(".form-group").find('.help-inline').show();
+                    return false;
+                }else{
+                    $("#uploadFile").closest(".form-group").find('.help-inline').hide();
+                }
+                $('#myModal').modal('show')
+                return true;
+                //验证通过后弹出模态框
+            }
 </script>
 </body>
-</html>
+</htm

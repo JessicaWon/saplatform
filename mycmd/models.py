@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-  
 from django.db import models
 from django import forms
 from datetime import datetime
 from django.contrib.auth.models import User,Group
 from guardian.shortcuts import assign_perm,assign,remove_perm
 from guardian.models import UserObjectPermission
+import json
+
 
 # Create your models here.
 
@@ -95,9 +98,10 @@ class LoginForm(forms.Form):
             error_messages={'required':'please input username'},
             widget=forms.TextInput(
                 attrs={
-                    'placeholder':'Username',
-                    'size': '40',
+                    'class':'form-control',
+                    'placeholder':'用户名'
                     }
+
                 )
             )
 
@@ -107,8 +111,8 @@ class LoginForm(forms.Form):
             error_messages = {'required':'please input password'},
             widget=forms.PasswordInput(
                 attrs={
-                    'placeholder':'Password',
-                    'size': '40',
+                    'class':'form-control',
+                    'placeholder':'密码'
                     }
                 ),
             )
@@ -198,16 +202,20 @@ class UpdateFiles(forms.Form):
 class UpdateFilesDB(models.Model):
     update_time = models.DateTimeField(default=datetime.now)
     is_all_gameservers = models.CharField(max_length=128, unique=False)
-    input_gameserver_id = models.CharField(max_length=1024, unique=False)
+    input_gameserver_id = models.TextField(unique=False)
+    exclu_gameserver_id = models.TextField(unique=False)
     update_type = models.CharField(max_length=128, unique=False)
+    update_by = models.CharField(max_length=128, unique=False)
     update_files_dir = models.CharField(max_length=128, unique=False)
     update_files = models.CharField(max_length=128, unique=False)
+    result_jid = models.CharField(max_length=64, unique=False)
     update_outcome = models.CharField(max_length=64, unique=False)
-    update_fail_server = models.CharField(max_length=1024, unique=False)
+    update_fail_server = models.TextField(unique=False)
     update_fail_details = models.TextField(unique=False)
-    update_by = models.CharField(max_length=128, unique=False)
     def __unicode__(self):
-        return self.name
+        return self.result_jid
+#    def toJSON(self):
+#        return json.dumps(dict([(attr, getattr(self, attr)) for attr in [f.name for f in self._meta.fields]]))
 class GamesvList(models.Model):
     ipaddr = models.GenericIPAddressField(unique=False)
     minionid = models.CharField(max_length=128, unique=False)
@@ -217,3 +225,48 @@ class GamesvList(models.Model):
     updatetime = models.DateTimeField(default=datetime.now)
     def __unicode__(self):
         return self.gameserverid
+
+
+##  class GamesvList(models.Model):
+##      gameserverid = models.CharField(max_length=128, unique=True)
+##      gameservername = models.CharField(max_length=128, unique=False)
+##      mergerstatus = models.CharField(max_length=1024, unique=False)
+##      mergergmsvtime = models.DateTimeField(default=datetime.now)
+##      opengmsvtime = models.DateTimeField(default=datetime.now)
+##      isnewest = models.CharField(max_length=64, unique=False)
+##      outnetipaddr = models.GenericIPAddressField(unique=False)
+##      innetipaddr = models.GenericIPAddressField(unique=False)
+##      gameport = models.CharField(max_length=128, unique=False)
+##      passport = models.CharField(max_length=128, unique=False)
+##      payport = models.CharField(max_length=128, unique=False)
+##      dbipaddr = models.GenericIPAddressField(unique=False)
+##      dbport = models.CharField(max_length=128, unique=False)
+##      sladbipaddr = models.GenericIPAddressField(unique=False)
+##      def __unicode__(self):
+##          return self.gameserverid
+##  
+##  class ServerList(models.Model):
+##      serverid = models.CharField(max_length=128, unique=True)
+##      minionid = models.CharField(max_length=128, unique=False)
+##      outnetipaddr = models.GenericIPAddressField(unique=False)
+##      innetipaddr = models.GenericIPAddressField(unique=False)
+##      isphisical = models.CharField(max_length=128, unique=False)
+##      ordertime = models.DateTimeField(default=datetime.now)
+##      def __unicode__(self):
+##          return self.serverid
+##  
+class InputDir(forms.Form):
+    CHOICES = (('/ebin', '/ebin'), 
+               ('/update', '/update'),
+               ('/deps', '/deps'),
+               ('/setting', '/setting'),
+               ('/config', '/config'),
+               ('/config/activityconfig', '/config/activityconfig'),
+               ('/config/app', '/config/app'),
+               ('/config/moduleconfig', '/config/moduleconfig'),
+               ('/log', '/log'),
+               ('/script', '/script'))
+    choice_field = forms.MultipleChoiceField(choices=CHOICES,widget=forms.CheckboxSelectMultiple())
+    def __unicode__(self):
+        return self.CHOICES
+##   

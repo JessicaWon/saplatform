@@ -18,7 +18,7 @@ from django.contrib import admin
 from mycmd import views
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)), ##not safe should be closed ss
     #url(r'^cmd/', views.cmd),
     #url(r'^upload/', views.upload_file),
     #url(r'^update/', views.update_file),
@@ -40,4 +40,6 @@ urlpatterns = [
     url(r'^userdel/',views.user_del),
     url(r'^permadd/',views.perms_add),
     url(r'^perm_del/',views.perms_delete),
+    url(r'^list/',views.update_list),
+    url(r'^process/',views.update_progress),
 ]

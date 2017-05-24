@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django import forms
-from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList,UpdateFiles,UpdateFilesDB,GamesvList
+from mycmd.models import userCmd,userFile,UserForm,SaltUserFile,SaltUserFileForm,LoginForm,GameServer,CloudServerStatus,SaltCommandMethod,UserDelList,UpdateFiles,UpdateFilesDB,GamesvList,InputDir
 #from mycmd.models import *
 import os, urllib2, urllib, json, re, time, datetime, shutil
 #import pickle
@@ -29,6 +29,7 @@ from passlib.hash import ldap_md5_crypt as md5encode
 from django.template import RequestContext
 
 import crypt
+import subprocess
 
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import Permission
@@ -42,6 +43,8 @@ from django.http import JsonResponse
 from django.http import StreamingHttpResponse
 import random
 import time
+from zipfile import * 
+import zipfile
 
 #import os
 #import os.path
@@ -75,6 +78,83 @@ def uploadify_script(request):
     return HttpResponse(uploadfilename)
     '''return rendertoresponse '''
     #return render_to_response('display.html', {'filenames': uploadfilename,'perm_all':perm_all},context_instance=RequestContext(request))
+'''必须将后缀名写成一致的，因为如果一个带/，一个不带，那导致后面在对比的时候出现问题'''
+def cmp_dir(dir1,dir2):
+    #if os.path.isdir(dir1):
+    status = []
+    def get_dir_return(rootDir):
+        absdirs = []
+        dirs = []
+        def Test2(rootDir):
+            for lists in os.listdir(rootDir):
+                newdir = os.path.join(rootDir, lists)
+                if os.path.isdir(newdir):
+                    #print newdir
+                    absdirs.append(newdir)
+
+                    Test2(newdir)
+                else:
+                    pass
+                    #print 'no dir'
+        #print dirs
+
+        #print dirs
+        thedir = rootDir
+        length = len(thedir)
+        Test2(thedir)
+        for dir in absdirs:
+            dirs.append(dir[length:])
+        return dirs
+    if os.path.isdir(dir1) and os.path.isdir(dir2):
+        dir1list = get_dir_return(dir1)
+        #print dir1list
+        dir2list = get_dir_return(dir2)
+        #print dir2list
+        for filename in dir1list:
+            if filename in dir2list:
+                status.append(True)
+            else:
+                status.append(False)
+        if all(status):
+            return "True"
+        else:
+            return "False"
+    else:
+        return "error"
+'''解压zip文件 '''
+def un_zip(file_name,tmpdir):
+    """unzip zip file"""
+    zip_file = zipfile.ZipFile(file_name)
+    if os.path.isdir(tmpdir):
+        pass
+    else:
+        os.mkdir(tmpdir)
+    for names in zip_file.namelist():
+        zip_file.extract(names,tmpdir)
+    zip_file.close()
+    #os.remove(file_name)
+
+'''统计目录中的所有文件并且进行归类'''
+def sortfile(rootDir):
+    all_files = []
+    config_files = []
+    beam_files = []
+
+    for root,dirs,files in os.walk(rootDir):
+        for filespath in files:
+            #print os.path.join(root,filespath)
+            print filespath
+            if os.path.splitext(filespath)[1][1:] == 'config':
+                config_files.append(filespath)
+                print config_files
+            elif os.path.splitext(filespath)[1][1:] == 'beam':
+                beam_files.append(filespath)
+            else:
+                pass
+    all_files = {'config_files':config_files,'beam_files':beam_files}
+    print all_files
+    return all_files
+
 
 
 @login_required(login_url="/login/")
@@ -102,27 +182,32 @@ def update_files_salt(request):
         files = os.listdir("/data/upload/" + create_dir)
         config_files = list()
         beam_files = list()
+        zip_files = list()
 
-        '''遍历文件，将文件复制到特定的目录'''
+        '''遍历文件，将文件复制到特定的目录|暂时不用这种方法来搬移文件了，使用上传zip包的方法来直接进行更新，但是会多出一个解压和统计文件夹中文件的函数,用于后面统计'''
         for afile in files:
-            if os.path.splitext(afile)[1][1:] == 'config':
+            if zipfile.is_zipfile("/data/upload/" + create_dir + '/' + afile):
+                zip_files.append(afile)
+            elif os.path.splitext(afile)[1][1:] == 'config':
                 config_files.append(afile)
-                if afile == 'data_box.config':
+                '''if afile == 'data_box.config':
                     shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/config/moduleconfig/" + afile)
                 else:
-                    shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/config/activityconfig/" + afile)
+                    shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/config/activityconfig/" + afile)'''
             elif os.path.splitext(afile)[1][1:] == 'beam':
                 beam_files.append(afile)
-                shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/ebin/" + afile)
+                '''shutil.copyfile('/data/upload/' + create_dir + '/' + afile, "/root/rsync/gameserver/ebin/" + afile)'''
             else:
                 pass
         print '---------------------config file---------------',config_files
         print '---------------------beam file---------------',beam_files
-
-        '''上传的文件'''
+        print '---------------------zip file---------------',zip_files
+        '''上传的文件分类'''
         uploadfiles = config_files + beam_files
 
+
         '''获取页面输入的所有数据,从上到下依次得到数据'''
+        upload_dir = 'config/moduleconfig'
         is_all_gameserver = request.POST.get('all_gameserver')
         exclu_gameserver_id = request.POST.get('exclu_gameserver')
         input_gameserver_id = request.POST.get('input_gameserver')
@@ -130,7 +215,7 @@ def update_files_salt(request):
         operate_type = request.POST.getlist('updatename')
         operate_aim = request.POST.get('types')
 
-        print '显示所有的输入',uploadfiles,is_all_gameserver,exclu_gameserver_id,input_gameserver_id,operate_type,operate_aim
+        print '显示所有的输入',uploadfiles,is_all_gameserver,exclu_gameserver_id,input_gameserver_id,operate_type,operate_aim,upload_dir
         '''对输入的内容转化成数组形式'''
         input_servers= str(input_gameserver_id)
         exclu_gameserver = str(exclu_gameserver_id)
@@ -139,12 +224,67 @@ def update_files_salt(request):
         exclu_gameserver_id = exclu_gameserver.split(",")
         print exclu_gameserver_id
 
-        '''判断更新文件夹中是否有文件'''
-        if uploadfiles:
+
+        '''判断上传文件中是否包含zip文件，或者包含多少个zip文件'''
+        if len(zip_files) == 0:
+            if len(uploadfiles) == 0:
+                error_code = '更新文件夹中无有效文件，请重新上传'
+                return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+            else:
+                if upload_dir == None:
+                    error_code = '请输入上传文件目录'
+                    return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+                else:
+                    new_tmp_dir = '/data/upload/' + create_dir + '/' + upload_dir
+                    rysnc_from_dir = '/data/upload/' + create_dir
+                    print 'rysnc_from_dir-----------',rysnc_from_dir,uploadfiles,new_tmp_dir
+                    os.makedirs(new_tmp_dir)
+                    for afiles in uploadfiles:
+                        shutil.move( '/data/upload/' + create_dir + '/' + afile, rysnc_from_dir + '/' + upload_dir + '/' + afile)
+        elif len(zip_files) == 1:
+            if len(uploadfiles) == 0:
+                upload_dir = '/'
+                azipfile = zip_files[0]
+                un_zip('/data/upload/' + create_dir + '/' + azipfile, '/data/upload/' + create_dir + '/')
+                rysnc_from_dir = '/data/upload/' + create_dir + '/' + os.path.splitext(azipfile)[0] + '/'
+                print rysnc_from_dir
+                '''解压后的目录与原目录进行对比，如果对比正确，就统计里面的配置文件config和beam，接着同步或者更新；如果对比不成功，就返回错误信息进行提示zip文件中的文件目录不正确'''
+                cpm_result = cmp_dir(rysnc_from_dir + '/', '/root/rsync/gameserver/')
+                if cpm_result == "True":
+                    pass
+                else:
+                    error_code = '压缩文件中的目录与rsync源文件夹不同'
+                    return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+                '''统计zip包中的config和beam文件'''
+                sortoutcome = sortfile('/data/upload/' + create_dir)
+                config_files = []
+                beam_files = []
+                config_files = sortoutcome['config_files']
+                beam_files = sortoutcome['beam_files']
+                uploadfiles = config_files + beam_files
+            else:
+                error_code = '上传文件中既包含zip又包含普通文件'
+                return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+        else:
+            error_code = '上传文件中有多个zip包，请检查上传的文件'
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+
+        '''判断上传文件的个数，如果大于1个就返回报错'''
+        '''上传zip包进行解压到相应的目录，并进行解压'''
+        '''解压后的目录与原目录进行对比，如果对比正确，就统计里面的配置文件config和beam，接着同步或者更新；如果对比不成功，就返回错误信息进行提示zip文件中的文件目录不正确'''
+        '''上传后的文件与rsync中的文件进行同步'''
+        rsync_command = "/usr/bin/rsync -vau --progress " + rysnc_from_dir + "/" + " " + "/root/rsync/gameserver/" + upload_dir + '/'
+        #rsync_command = "/usr/bin/rsync -vau --progress" + " " + "/data/upload/" + create_dir + "/ " + "/root/rsync/gameserver/"
+        print 'rsync command-----',rsync_command
+        outcome = subprocess.Popen(rsync_command,shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        print outcome
+
+        '''判断更新文件夹中是否有文件,这个程序直接在前面的大的里面判断了，因为包含了zip文件，不用再次判断了'''
+        '''if uploadfiles:
             pass
         else:
             error_code = '更新文件夹中无文件，请重新上传'
-            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))
+            return render_to_response('error.html',{'errorcode':error_code},context_instance=RequestContext(request))'''
 
         '''判断是否全选游戏服'''
         if is_all_gameserver == "all_gameserver":
@@ -220,6 +360,7 @@ def update_files_salt(request):
         return HttpResponse(ret_json)
 
     else:
+        #input_dir = InputDir()
         update = UpdateFilesDB()
         shutil.rmtree('/tmp/django_tmp/')
         os.mkdir('/tmp/django_tmp/')
@@ -792,6 +933,7 @@ def update_list(request):
                 print '-----key----',key
                 count = len(outcome[key])
                 for i in range(count):
+                    print outcome
                     print '--------------',outcome[key][i]['runstatus'],type(outcome[key][i]['runstatus'])
                     if outcome[key][i]['runstatus'] == 0:
                         succeeded_gmsv_id.append(outcome[key][i]['gameserver'])
@@ -826,7 +968,22 @@ def update_list(request):
 @login_required(login_url="/login/")
 def update_progress(request):
     if request.method == 'POST':
-        update_jid=request.POST.get('result_jid')
+        '''update_jid=request.POST.get('result_jid')
+        user_input = UpdateFilesDB.objects.get(jid=update_jid)
+        is_all_gameservers = UpdateFilesDB.objects.filter(update_jid).value('is_all_gameservers')
+        print is_all_gameservers,type(is_all_gameservers)
+        input_gameserver_id = UpdateFilesDB.objects.filter(update_jid).value('input_gameserver_id')
+        print input_gameserver_id,len(input_gameserver_id)
+        exclu_gameserver_id = UpdateFilesDB.objects.filter(update_jid).value('exclu_gameserver_id')
+        print exclu_gameserver_id,len(exclu_gameserver_id)
+        if is_all_gameservers == 'Yes':
+            exclu_account = len(exclu_gameserver_id)
+            allgmsv = GamesvList.objects.all().count() - exclu_gameserver_id
+        else:
+            input_account = len(input_gameserver_id)
+            allgmsv = input_account
+
+        
         opts = salt.config.master_config('/etc/salt/master')
         runner = salt.runner.RunnerClient(opts)
         outcome = runner.cmd('jobs.lookup_jid', [str(update_jid)])
@@ -834,10 +991,19 @@ def update_progress(request):
         for key in outcome:
             finishedgmsv = finishedgmsv + len(outcome[key])
         #print '--------------finishedgmsv------',finishedgmsv
+        #allgmsv = GamesvList.objects.all().count()
+        #print '--------------allgmsv------',allgmsv'''
         allgmsv = GamesvList.objects.all().count()
-        print '--------------allgmsv------',allgmsv
     else:
         update_jid = request.GET.get('result_jid')
+        print UpdateFilesDB.objects.get(result_jid = update_jid).is_all_gameservers,type(UpdateFilesDB.objects.get(result_jid = update_jid).is_all_gameservers)
+        #print is_all_gameservers,type(is_all_gameservers)
+        print UpdateFilesDB.objects.get(result_jid = update_jid).input_gameserver_id,type(UpdateFilesDB.objects.get(result_jid = update_jid).input_gameserver_id)
+        #print input_gameserver_id,len(input_gameserver_id)
+        print UpdateFilesDB.objects.get(result_jid = update_jid).exclu_gameserver_id,type(UpdateFilesDB.objects.get(result_jid = update_jid).exclu_gameserver_id)
+        #print exclu_gameserver_id,len(exclu_gameserver_id)
+
+
         print update_jid
         opts = salt.config.master_config('/etc/salt/master')
         runner = salt.runner.RunnerClient(opts)
@@ -851,7 +1017,9 @@ def update_progress(request):
 
     #time.sleep(5)
     perm_all = Permission.objects.all()
-    ret = {"finishedgmsv":finishedgmsv,"allgmsv":allgmsv,"result_jid":update_jid}
+    '''暂时将文件的返回值修改成为全部成功，后面做完采集所有的服务器信息后再完善这里的进度,这个地方需要讨论很多情况,后续会画出逻辑图'''
+    #ret = {"finishedgmsv":finishedgmsv,"allgmsv":allgmsv,"result_jid":update_jid}
+    ret = {"finishedgmsv":allgmsv,"allgmsv":allgmsv,"result_jid":update_jid}
     print ret
     ## dump data to html, this data need to be json format
     ret_json = json.dumps(ret)

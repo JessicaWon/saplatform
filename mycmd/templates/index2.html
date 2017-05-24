@@ -1,641 +1,546 @@
 <!DOCTYPE html>
 <html>
 <head>
-{% block head %}
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}SKYMOONS | Dashboard{% endblock %}</title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
-  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
-  <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-
-{% endblock %}
-
-</head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}SKYMOONS | 概览{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">{% endblock %}</head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="index2.html" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>A</b>LT</span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Skymoons</b>SA</span>
-    </a>
-
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top" role="navigation">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
-      <!-- Navbar Right Menu -->
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="/static/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-<!--
-              <span class="hidden-xs">Skymoons</span>
--->
-              <span class="hidden-xs">{{ username }}</span>
+    <div class="wrapper">
+        <!-- 头部 -->
+        <header class="main-header">
+            <!--   左 -->
+            <a href="index2.html" class="logo">
+                <span class="logo-mini"> <b>Skymoons</b>
+                    SA
+                </span>
+                <span class="logo-lg"> <b>Skymoons</b>
+                    SA
+                </span>
             </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <img src="/static/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
-                <p>
-<!--
-                  Skymoons - VideoGame
--->
-                  {{username}} - VideoGame
-                  <small>Member since Nov. 2012</small>
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
+            <!--   /左 -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!--   右侧 -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="/static/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <span class="hidden-xs">{{ username }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src="/static/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <p>
+                                        {{username}} - VideoGame
+                                        <small>Member since Nov. 2012</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Followers</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Sales</a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <a href="#">Friends</a>
+                                        </div>
+                                    </div>
+                                    <!-- /.row --> </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">主页</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="/logout/" class="btn btn-default btn-flat">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                        <li>
+                            <a href="#" data-toggle="control-sidebar"> <i class="fa fa-gears"></i>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                </div>
-                <div class="pull-right">
-                  <a href="/logout/" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-          <!-- Control Sidebar Toggle Button -->
-          <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-          </li>
-        </ul>
-      </div>
-
-    </nav>
-  </header>
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="/static/dist/img/user2-160x160.jpg" class="img-thumbnail" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Skymoons</p>
-        </div>
-      </div>
-      <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu">
-        {% block sidebar %}
-        <li class="header">MAIN NAVIGATION</li>
-        <li class="active treeview">
-          <a href="http://10.10.11.69/index/">
-            <i class="fa fa-dashboard"></i> <span>概览</span>
-          </a>
-        </li>
-
-        <li>
-          <li class="treeview">
-          <a href="http://10.10.11.69/general/">
-            <i class="fa fa-th"></i> <span>服务状态</span>
-          </a>
-        </li>
-
-        <li class="treeview">
-          <a href="http://10.10.11.69/dir/">
-            <i class="fa fa-edit"></i> <span>文件更新</span>
-          </a>
-        </li>
-
-       <li class="treeview">
-           <a href="http://10.10.11.69/privileges/">                    
-               <i class="fa fa-gears"></i> <span>权限管理</span>                    
-               <i class="fa fa-angle-left pull-right"></i>               
-           </a>
-           <ul class="treeview-menu">
-               <li class="treeview">
-                   <a href="/admin">管理</a>
-                   <ul class="treeview-menu">
-                       <li><a href="/user"><i class="fa fa-circle-o"></i>user</a></li>
-                       <li class="treeview">
-                           <a href="/admin/role">                                    
-                               <i class="fa fa-circle-o"></i>权限<i class="fa fa-angle-left pull-right"></i>                                
-                           </a>
-                           <ul class="treeview-menu">
-                               <li><a href="/admin/route"><i class="fa fa-circle-o"></i> 路由</a></li>
-                               <li><a href="/admin/permission"><i class="fa fa-circle-o"></i>权限</a></li>
-                               <li><a href="/admin/role"><i class="fa fa-circle-o"></i>role</a></li>
-                               <li><a href="/admin/assignment"><i class="fa fa-circle-o"></i>指派</a></li>
-                               <li><a href="/admin/menu"><i class="fa fa-circle-o"></i>菜单</a></li>
-                           </ul>
-                       </li>
-                   </ul>
-               </li>
-           </ul>
-       </li>
-      {% endblock %}
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-    {% block content-header %}
-      <h1>
-        线上概览
-        <small>Version 1.0</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dashboard</li>
-      </ol>
-     {% endblock %}
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-    {% block content %}
-      <!-- Info boxes -->
-      <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="ion ion-gear-b"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">游戏服</span>
-              <span class="info-box-number">{{game_server}}<small></small></span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-		
-		        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-darken-4"><i class="ion ion-ios-cloudy"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">云服务器</span>
-              <span class="info-box-number">{{cloud_server}}<small></small></span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa ion-alert"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">告警</span>
-              <span class="info-box-number">{{zabbix_alert}}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-teal"><i class="ion ion-ios-cart-outline"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">支出管理</span>
-              <span class="info-box-number">{{turnover}}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">在线玩家</span>
-              <span class="info-box-number">{{online_players}}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="box">
-            <div class="box-header with-border">
-              <h3 class="box-title">月季度游戏报告</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-wrench"></i></button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                  </ul>
-                </div>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <div class="row">
-                <div class="col-md-8">
-                  <p class="text-center">
-                    <strong>游戏服: 近六个月的游戏服开服数量趋势</strong>
-                  </p>
-
-                  <div class="chart">
-                    <!-- Sales Chart Canvas -->
-                    <canvas id="areaChart" style="height: 190px;"></canvas>
-                  </div>
-                  <!-- /.chart-responsive -->
-                </div>
-                <!-- /.col -->
-                <div class="col-md-4">
-                  <p class="text-center">
-                    <strong>所有线上游戏</strong>
-                  </p>
-
-                  <div class="progress-group">
-                    <span class="progress-text">皮卡丘</span>
-                    <span class="progress-number"><b>{{pkq_data}}</b>/200</span>
-
-                    <div class="progress sm">
-                      <div class="progress-bar progress-bar-aqua" style="width: 80%"></div>
+                <!--   /右侧 --> </nav>
+        </header>
+        <!-- /头部 -->
+        <!-- 菜单 -->
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <ul class="sidebar-menu">
+                    {% block sidebar %}
+                    <li class="treeview active">
+                        <a href="http://123.59.150.94:8080/index/">
+                            <i class="fa fa-dashboard"></i>
+                            <span>概览</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="http://123.59.150.94:8080/general/">
+                            <i class="fa fa-th"></i>
+                            <span>服务状态</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="http://123.59.150.94:8080/dir/">
+                            <i class="fa fa-edit"></i>
+                            <span>文件更新</span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="http://123.59.150.94:8080/dir/">
+                                    <i class="fa fa-circle-o"></i>
+                                    文件上传
+                                </a>
+                            </li>
+                            <li>
+                                <a href="http://123.59.150.94:8080/list/">
+                                    <i class="fa fa-circle-o"></i>
+                                    更新记录表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="http://123.59.150.94:8080/privileges/">
+                            <i class="fa fa-gears"></i>
+                            <span>权限管理</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="/user">
+                                    <i class="fa fa-circle-o"></i>
+                                    添加用户
+                                </a>
+                            </li>
+                        </ul>
+                        </li>
+                        {% endblock %}
+                    </ul>
+                </section>
+                <!-- /.菜单 -->
+            </aside>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <section class="content-header">
+                    {% block content-header %}
+                    <h1>
+                        线上概览
+                        <small>Version 1.0</small>
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-dashboard"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li class="active">Dashboard</li>
+                    </ol>
+                    {% endblock %}
+                </section>
+                <!-- Main content -->
+                <section class="content">
+                    {% block content %}
+                    <!-- Info boxes -->
+                    <div class="row">
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua">
+                                    <i class="ion ion-gear-b"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">游戏服</span>
+                                    <span class="info-box-number">
+                                        {{game_server}}
+                                        <small></small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content --> </div>
+                            <!-- /.info-box --> </div>
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-darken-4">
+                                    <i class="ion ion-ios-cloudy"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">云服务器</span>
+                                    <span class="info-box-number">
+                                        {{cloud_server}}
+                                        <small></small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content --> </div>
+                            <!-- /.info-box --> </div>
+                        <!-- /.col -->
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-red">
+                                    <i class="fa ion-alert"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">告警</span>
+                                    <span class="info-box-number">{{zabbix_alert}}</span>
+                                </div>
+                                <!-- /.info-box-content --> </div>
+                            <!-- /.info-box --> </div>
+                        <!-- /.col -->
+                        <!-- fix for small devices only -->
+                        <div class="clearfix visible-sm-block"></div>
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-teal">
+                                    <i class="ion ion-ios-cart-outline"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">支出管理</span>
+                                    <span class="info-box-number">{{turnover}}</span>
+                                </div>
+                                <!-- /.info-box-content --> </div>
+                            <!-- /.info-box --> </div>
+                        <!-- /.col -->
+                        <div class="col-md-2 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-yellow">
+                                    <i class="ion ion-ios-people-outline"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">在线玩家</span>
+                                    <span class="info-box-number">{{online_players}}</span>
+                                </div>
+                                <!-- /.info-box-content --> </div>
+                            <!-- /.info-box --> </div>
+                        <!-- /.col --> </div>
+                    <!-- /.row -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">月季度游戏报告</h3>
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                                <i class="fa fa-wrench"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a href="#">Action</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">Another action</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">Something else here</a>
+                                                </li>
+                                                <li class="divider"></li>
+                                                <li>
+                                                    <a href="#">Separated link</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <p class="text-center"> <strong>游戏服: 近六个月的游戏服开服数量趋势</strong>
+                                            </p>
+                                            <div class="chart">
+                                                <!-- Sales Chart Canvas -->
+                                                <canvas id="areaChart" style="height: 190px;"></canvas>
+                                            </div>
+                                            <!-- /.chart-responsive --> </div>
+                                        <!-- /.col -->
+                                        <div class="col-md-4">
+                                            <p class="text-center"> <strong>所有线上游戏</strong>
+                                            </p>
+                                            <div class="progress-group">
+                                                <span class="progress-text">皮卡丘</span>
+                                                <span class="progress-number">
+                                                    <b>{{pkq_data}}</b>
+                                                    /200
+                                                </span>
+                                                <div class="progress sm">
+                                                    <div class="progress-bar progress-bar-aqua" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                            <!-- /.progress-group -->
+                                            <div class="progress-group">
+                                                <span class="progress-text">三国</span>
+                                                <span class="progress-number">
+                                                    <b>{{sanguo_gameserver}}</b>
+                                                    /400
+                                                </span>
+                                                <div class="progress sm">
+                                                    <div class="progress-bar progress-bar-red" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                            <!-- /.progress-group -->
+                                            <div class="progress-group">
+                                                <span class="progress-text">赛尔号</span>
+                                                <span class="progress-number">
+                                                    <b>{{wlwz_gameserver}}</b>
+                                                    /800
+                                                </span>
+                                                <div class="progress sm">
+                                                    <div class="progress-bar progress-bar-green" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                            <!-- /.progress-group -->
+                                            <div class="progress-group">
+                                                <span class="progress-text">其他游戏</span>
+                                                <span class="progress-number">
+                                                    <b>{{other_gameserver}}</b>
+                                                    /500
+                                                </span>
+                                                <div class="progress sm">
+                                                    <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <!-- /.progress-group -->
-                  <div class="progress-group">
-                    <span class="progress-text">三国</span>
-                    <span class="progress-number"><b>{{sanguo_gameserver}}</b>/400</span>
-
-                    <div class="progress sm">
-                      <div class="progress-bar progress-bar-red" style="width: 80%"></div>
-                    </div>
-                  </div>
-                  <!-- /.progress-group -->
-                  <div class="progress-group">
-                    <span class="progress-text">赛尔号</span>
-                    <span class="progress-number"><b>{{wlwz_gameserver}}</b>/800</span>
-
-                    <div class="progress sm">
-                      <div class="progress-bar progress-bar-green" style="width: 80%"></div>
-                    </div>
-                  </div>
-                  <!-- /.progress-group -->
-                  <div class="progress-group">
-                    <span class="progress-text">其他游戏</span>
-                    <span class="progress-number"><b>{{other_gameserver}}</b>/500</span>
-
-                    <div class="progress sm">
-                      <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
-                    </div>
-                  </div>
-                  <!-- /.progress-group -->
+                    {% endblock %}
+                </section>
+                <!-- /.content --> </div>
+            <footer class="main-footer">
+                <div class="pull-right hidden-xs">
+                    <b>Version</b>
+                    1.0.0
                 </div>
-                <!-- /.col -->
-              </div>
-              <!-- /.row -->
-            </div>
-			
-            <!-- ./box-body -->
-            <div class="box-footer">
-              <div class="row">
-
-                <!-- /.col -->
-                <div class="col-sm-3 col-xs-6">
-                  <div class="description-block border-right">
-                    <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">总共支出</span>
-                  </div>
-                  <!-- /.description-block -->
-                </div>
-                <!-- /.col -->
-
-                <!-- /.col -->
-                <div class="col-sm-3 col-xs-6">
-                  <div class="description-block">
-                    <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">游戏服开服目标</span>
-                  </div>
-                  <!-- /.description-block -->
-                </div>
-              </div>
-              <!-- /.row -->
-            </div>
-            <!-- /.box-footer -->
-          </div>
-          <!-- /.box -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-
-      <!-- Main row -->
-      </div>
-      <!-- /.row -->
-    {% endblock %}
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 2.3.2
-    </div>
-    <strong>Copyright &copy; 2014-2015 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
+                <strong>Copyright &copy; 2016-2017
+                    <a href="http://www.skymoons.com">Skymoons</a>
+                    .</strong>
+                All rights
     reserved.
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Create the tabs -->
-    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-      <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-      <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-    </ul>
-    <!-- Tab panes -->
-    <div class="tab-content">
-      <!-- Home tab content -->
-      <div class="tab-pane" id="control-sidebar-home-tab">
-        <h3 class="control-sidebar-heading">Recent Activity</h3>
-        <ul class="control-sidebar-menu">
-          <li>
-            <a href="javascript::;">
-              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
-
-                <p>Will be 23 on April 24th</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <i class="menu-icon fa fa-user bg-yellow"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
-
-                <p>New phone +1(800)555-1234</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
-
-                <p>nora@example.com</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <i class="menu-icon fa fa-file-code-o bg-green"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
-
-                <p>Execution time 5 seconds</p>
-              </div>
-            </a>
-          </li>
-        </ul>
-        <!-- /.control-sidebar-menu -->
-
-        <h3 class="control-sidebar-heading">Tasks Progress</h3>
-        <ul class="control-sidebar-menu">
-          <li>
-            <a href="javascript::;">
-              <h4 class="control-sidebar-subheading">
-                Custom Template Design
-                <span class="label label-danger pull-right">70%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <h4 class="control-sidebar-subheading">
-                Update Resume
-                <span class="label label-success pull-right">95%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <h4 class="control-sidebar-subheading">
-                Laravel Integration
-                <span class="label label-warning pull-right">50%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript::;">
-              <h4 class="control-sidebar-subheading">
-                Back End Framework
-                <span class="label label-primary pull-right">68%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
-              </div>
-            </a>
-          </li>
-        </ul>
-        <!-- /.control-sidebar-menu -->
-
-      </div>
-      <!-- /.tab-pane -->
-
-      <!-- Settings tab content -->
-      <div class="tab-pane" id="control-sidebar-settings-tab">
-        <form method="post">
-          <h3 class="control-sidebar-heading">General Settings</h3>
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Report panel usage
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Some information about this general settings option
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Allow mail redirect
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Other sets of options are available
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Expose author name in posts
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Allow the user to show his name in blog posts
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <h3 class="control-sidebar-heading">Chat Settings</h3>
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Show me as online
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Turn off notifications
-              <input type="checkbox" class="pull-right">
-            </label>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Delete chat history
-              <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-            </label>
-          </div>
-          <!-- /.form-group -->
-        </form>
-      </div>
-      <!-- /.tab-pane -->
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
+            </footer>
+            <!-- Control Sidebar -->
+            <aside class="control-sidebar control-sidebar-dark">
+                <!-- Create the tabs -->
+                <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                    <li>
+                        <a href="#control-sidebar-home-tab" data-toggle="tab">
+                            <i class="fa fa-home"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#control-sidebar-settings-tab" data-toggle="tab">
+                            <i class="fa fa-gears"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!-- Home tab content -->
+                    <div class="tab-pane" id="control-sidebar-home-tab">
+                        <h3 class="control-sidebar-heading">Recent Activity</h3>
+                        <ul class="control-sidebar-menu">
+                            <li>
+                                <a href="javascript::;">
+                                    <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                        <p>Will be 23 on April 24th</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <i class="menu-icon fa fa-user bg-yellow"></i>
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                        <p>New phone +1(800)555-1234</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+                                        <p>nora@example.com</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <i class="menu-icon fa fa-file-code-o bg-green"></i>
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+                                        <p>Execution time 5 seconds</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- /.control-sidebar-menu -->
+                        <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                        <ul class="control-sidebar-menu">
+                            <li>
+                                <a href="javascript::;">
+                                    <h4 class="control-sidebar-subheading">
+                                        Custom Template Design
+                                        <span class="label label-danger pull-right">70%</span>
+                                    </h4>
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <h4 class="control-sidebar-subheading">
+                                        Update Resume
+                                        <span class="label label-success pull-right">95%</span>
+                                    </h4>
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <h4 class="control-sidebar-subheading">
+                                        Laravel Integration
+                                        <span class="label label-warning pull-right">50%</span>
+                                    </h4>
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript::;">
+                                    <h4 class="control-sidebar-subheading">
+                                        Back End Framework
+                                        <span class="label label-primary pull-right">68%</span>
+                                    </h4>
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- /.control-sidebar-menu --> </div>
+                    <!-- /.tab-pane -->
+                    <!-- Settings tab content -->
+                    <div class="tab-pane" id="control-sidebar-settings-tab">
+                        <form method="post">
+                            <h3 class="control-sidebar-heading">General Settings</h3>
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Report panel usage
+                                    <input type="checkbox" class="pull-right" checked></label>
+                                <p>Some information about this general settings option</p>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Allow mail redirect
+                                    <input type="checkbox" class="pull-right" checked></label>
+                                <p>Other sets of options are available</p>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Expose author name in posts
+                                    <input type="checkbox" class="pull-right" checked></label>
+                                <p>Allow the user to show his name in blog posts</p>
+                            </div>
+                            <!-- /.form-group -->
+                            <h3 class="control-sidebar-heading">Chat Settings</h3>
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Show me as online
+                                    <input type="checkbox" class="pull-right" checked></label>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Turn off notifications
+                                    <input type="checkbox" class="pull-right"></label>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Delete chat history
+                                    <a href="javascript::;" class="text-red pull-right">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </label>
+                            </div>
+                            <!-- /.form-group --> </form>
+                    </div>
+                    <!-- /.tab-pane --> </div>
+            </aside>
+            <!-- /.control-sidebar -->
+            <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
-
-</div>
-<!-- ./wrapper -->
-
-<!-- jQuery 2.1.4 -->
-<script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-<!-- Bootstrap 3.3.5 -->
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
-<!-- FastClick -->
-<script src="/static/plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="/static/dist/js/app.min.js"></script>
-<!-- Sparkline -->
-<script src="/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-<!-- jvectormap -->
-<script src="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<!-- SlimScroll 1.3.0 -->
-<script src="/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<!-- ChartJS 1.0.1 -->
-<script src="/static/plugins/chartjs/Chart.min.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!--<script src="dist/js/pages/dashboard2.js"></script>-->
-<!-- AdminLTE for demo purposes -->
-<script src="/static/dist/js/demo.js"></script>
-<script>
+            <div class="control-sidebar-bg"></div>
+        </div>
+        <!-- ./wrapper -->
+        <!-- jQuery 2.1.4 -->
+        <script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+        <!-- Bootstrap 3.3.5 -->
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <!-- FastClick -->
+        <script src="/static/plugins/fastclick/fastclick.js"></script>
+        <!-- AdminLTE App -->
+        <script src="/static/dist/js/app.min.js"></script>
+        <!-- Sparkline -->
+        <script src="/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+        <!-- jvectormap -->
+        <script src="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+        <script src="/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <!-- SlimScroll 1.3.0 -->
+        <script src="/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <!-- ChartJS 1.0.1 -->
+        <script src="/static/plugins/chartjs/Chart.min.js"></script>
+        <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+        <!--<script src="dist/js/pages/dashboard2.js"></script>
+    -->
+    <!-- AdminLTE for demo purposes -->
+    <script src="/static/dist/js/demo.js"></script>
+    <script>
   $(function () {
     /* ChartJS
      * -------
      * Here we will create a few charts using ChartJS
      */
-
     //--------------
     //- AREA CHART -
     //--------------
-
     // Get context with jQuery - using jQuery's .get() method.
     var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
     // This will get the first returned node in the jQuery collection.
     var areaChart = new Chart(areaChartCanvas);
-
     var areaChartData = {
       labels: {{ month_name_pool|safe }} ,
       datasets: [
@@ -661,7 +566,6 @@
         }
       ]
     };
-
     var areaChartOptions = {
       //Boolean - If we should show the scale at all
       showScale: true,
@@ -699,7 +603,7 @@
       //Boolean - whether to make the chart responsive to window resizing
       responsive: true
     };
-	//painting
+  //painting
     areaChart.Line(areaChartData, areaChartOptions);
   });
 </script>
