@@ -7,4 +7,4 @@ this project is a helpful platform to make all the system administrators work mo
 ![image](https://github.com/JessicaWon/saplatform/raw/master/preview/2.png)
 ![image](https://github.com/JessicaWon/saplatform/raw/master/preview/3.png)
 ![image](https://github.com/JessicaWon/saplatform/raw/master/preview/4.png)
-![image](https://github.com/JessicaWon/saplatform/raw/master/preview/5.png)
+##![image](https://github.com/JessicaWon/saplatform/raw/master/preview/5.png)
